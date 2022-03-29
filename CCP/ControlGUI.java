@@ -1,4 +1,4 @@
-package CPP;
+package CCP;
 
 import javax.swing.*;
 import java.awt.*;
