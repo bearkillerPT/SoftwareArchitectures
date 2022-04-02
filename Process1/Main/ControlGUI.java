@@ -1,4 +1,4 @@
-package CCP;
+package Process1.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,13 +122,6 @@ public ControlGUI(){
         this.text_inputs_panel.add(ui_pyt_panel);
         this.text_inputs_panel.add(ui_time_to_move_panel);
 
-        this.getContentPane().add(this.text_inputs_panel, BorderLayout.CENTER);
-    }
-
-    public static void main(String args[]) {
-        ControlGUI control = new ControlGUI();
-        control.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        control.setSize(600, 400);
-        control.setVisible(true);
+        this.getContentPane().add(this.text_inputs_panel);
     }
 }

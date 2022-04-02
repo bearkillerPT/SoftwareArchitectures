@@ -2,8 +2,8 @@
 
 ## CPP
 ```
-javac .\CCP\ControlGUI.java;
-java CCP/ControlGUI 
+javac Process1/Main/*.java;
+java Process1/Main/Process1
 ```
 
 ## HCP
