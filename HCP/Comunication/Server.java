@@ -7,15 +7,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    private final int portNumber = 4444;
+    private final int portNumber = 4445;
     private ServerSocket serverSocket;
+    private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;
 
     public Server() {
         try {
             this.serverSocket = new ServerSocket(portNumber);
-            Socket clientSocket = serverSocket.accept();
+            this.clientSocket = serverSocket.accept();
+            System.out.println("Accepted CCP Socket connection!");
             this.out = new PrintWriter(clientSocket.getOutputStream(), true);
             this.in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));

@@ -9,7 +9,7 @@ public class Client {
 
     public Client() {
         try {
-            this.client = new Socket("127.0.0.1", 4444);
+            this.client = new Socket("127.0.0.1", 4445);
             out = new PrintWriter(client.getOutputStream(), true);
         } catch (Exception e) {
             System.err.println(e);

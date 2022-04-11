@@ -1,4 +1,4 @@
-package Process1.Main;
+package CCP.Main;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +9,7 @@ import java.awt.event.*;
  */
 public class ControlGUI extends JFrame {
     /* State Variables */
+    private String sim_state = "Stopped";
     private int total_adult_patients;
     private int total_children_patients;
     private int total_seats;
@@ -19,7 +20,13 @@ public class ControlGUI extends JFrame {
 
     /* UI */
     JPanel text_inputs_panel;
+    JPanel buttons_panel;
 
+    JButton ccp_start_button = new JButton("Start");
+    JButton ccp_suspend_button = new JButton("Suspend");
+    JButton ccp_resume_button = new JButton("Resume");
+    JButton ccp_stop_button = new JButton("Stop");
+    JButton ccp_end_button = new JButton("End");
     JButton ccp_mode_button = new JButton("Auto");
     JButton allow_costumer_button = new JButton("Allow Costumer");
 
@@ -57,26 +64,44 @@ public class ControlGUI extends JFrame {
      */
     public ControlGUI() {
         super("CPP GUI");
+        this.setLayout(new GridLayout(2, 1));
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         // Mode Control
+        ccp_start_button.setBackground(Color.GREEN);
+        ccp_suspend_button.setBackground(Color.gray);
+        ccp_resume_button.setBackground(Color.green);
+        ccp_stop_button.setBackground(Color.red);
+        ccp_end_button.setBackground(Color.RED);
         ccp_mode_button.setBackground(Color.green);
-        ccp_mode_button.setForeground(Color.white);
         allow_costumer_button.setBackground(Color.blue);
+
+        ccp_start_button.setForeground(Color.white);
+        ccp_suspend_button.setForeground(Color.white);
+        ccp_resume_button.setForeground(Color.white);
+        ccp_stop_button.setForeground(Color.white);
+        ccp_end_button.setForeground(Color.white);
+        ccp_mode_button.setForeground(Color.white);
         allow_costumer_button.setForeground(Color.white);
+        ccp_start_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sim_state = "Running";
+            }
+        });
         ccp_mode_button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (ccp_mode_button.getText().equals("Auto")) {
                     ccp_mode_button.setBackground(Color.red);
                     ccp_mode_button.setText("Manual");
-                    text_inputs_panel.add(allow_costumer_button);
+                    buttons_panel.add(allow_costumer_button);
 
                     pack();
                 } else {
                     ccp_mode_button.setBackground(Color.green);
                     ccp_mode_button.setText("Auto");
-                    text_inputs_panel.remove(allow_costumer_button);
+                    buttons_panel.remove(allow_costumer_button);
                     pack();
                 }
             }
@@ -93,7 +118,8 @@ public class ControlGUI extends JFrame {
         /* UI Variables Initialization */
         this.text_inputs_panel = new JPanel();
         this.text_inputs_panel.setLayout(new FlowLayout());
-
+        this.buttons_panel = new JPanel();
+        this.buttons_panel.setLayout(new FlowLayout());
 
         this.ui_total_adult_patients_label = new JLabel("Number of Adult Patients");
         this.ui_total_children_patients_label = new JLabel("Number of Children Patients");
@@ -164,9 +190,50 @@ public class ControlGUI extends JFrame {
         this.text_inputs_panel.add(ui_mdt_panel);
         this.text_inputs_panel.add(ui_pyt_panel);
         this.text_inputs_panel.add(ui_time_to_move_panel);
-        this.text_inputs_panel.add(ccp_mode_button);
+        
+        this.buttons_panel.add(ccp_start_button);
+        this.buttons_panel.add(ccp_suspend_button);
+        this.buttons_panel.add(ccp_resume_button);
+        this.buttons_panel.add(ccp_stop_button);
+        this.buttons_panel.add(ccp_end_button);
 
-        this.getContentPane().add(this.text_inputs_panel);
         text_inputs_panel.setBackground(Color.decode("#282c34"));
+        buttons_panel.setBackground(Color.decode("#282c34"));
+        this.getContentPane().add(this.text_inputs_panel);
+        this.getContentPane().add(this.buttons_panel);
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Process1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Process1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Process1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Process1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        this.setVisible(true);
+        pack();
+    }
+
+    public String getSimState(){
+        return this.sim_state;
+    }
+
+    public String getConfiguration() {
+        String res = "";
+        res += "total_adult_patients:" + this.ui_total_adult_patients_input.getText();
+        res += ",total_children_patients:" + this.ui_total_children_patients_input.getText();
+        res += ",total_seats:" + this.ui_total_seats_input.getText();
+        res += ",evt:" + this.ui_evt_input.getText();
+        res += ",mdt:" + this.ui_mdt_input.getText();
+        res += ",pyt:" + this.ui_pyt_input.getText();
+        res += ",time_to_move:" + this.ui_time_to_move_input.getText();
+        return res;
     }
 }

@@ -2,8 +2,8 @@
 
 ## CPP
 ```
-javac Process1/Main/*.java;
-java Process1/Main/Process1
+javac .\CCP\Main\*.java; java CCP/Main/Process1
 ```
 
 ## HCP
+javac .\HCP\Main\*.java; java HCP/Main/Process2
