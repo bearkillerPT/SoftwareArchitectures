@@ -4,15 +4,9 @@
  */
 package Process1.Main;
 import Process1.Main.ControlGUI;
-import Process1.Entities.TEntity1;
+import Process1.Entities.Patient;
 import Process1.Entities.TEntity2;
-import Process1.Monitor.ISharedRegion1_Entity1;
-import Process1.Monitor.ISharedRegion1_Entity2;
-import Process1.Monitor.ISharedRegion2_Entity1;
-import Process1.Monitor.ISharedRegion2_Entity2;
-import Process1.Monitor.MSharedRegion1;
-import Process1.Monitor.MSharedRegion2;
-
+import Process1.Monitor.Manchester_Fifo;
 /**
  *
  * @author user
@@ -63,8 +57,7 @@ public class Process1 extends ControlGUI {
         });
         
         // Eventually this code should be localed elsewhere but not here
-        MSharedRegion1 mSh1 = new MSharedRegion1();
-        MSharedRegion2 mSh2 = new MSharedRegion2();
+        Manchester_Fifo mSh1 = new MSharedRegion1();
         
         // Example of interfaces usage
         TEntity1 tE1 = new TEntity1( 1, (ISharedRegion1_Entity1)mSh1,
