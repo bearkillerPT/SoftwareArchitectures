@@ -6,13 +6,13 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class HCPServer {
+public class Server {
     private final int portNumber = 4444;
     private ServerSocket serverSocket;
     private PrintWriter out;
     private BufferedReader in;
 
-    public HCPServer() {
+    public Server() {
         try {
             this.serverSocket = new ServerSocket(portNumber);
             Socket clientSocket = serverSocket.accept();
@@ -20,7 +20,7 @@ public class HCPServer {
             this.in = new BufferedReader(
                     new InputStreamReader(clientSocket.getInputStream()));
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
         }
 
     }
@@ -30,7 +30,7 @@ public class HCPServer {
         try{
             res = in.readLine();
         }catch(Exception e){
-            System.out.println(e);
+            System.err.println(e);
         }
         return res;
     }
