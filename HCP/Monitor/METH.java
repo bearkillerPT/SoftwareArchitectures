@@ -1,7 +1,8 @@
 package HCP.Monitor;
 
 import HCP.Entities.IETH;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import HCP.Entities.IPatient_Eth;
@@ -10,8 +11,8 @@ import HCP.Entities.TChild;
 
 public class METH implements IPatient_Eth, IETH {
 
-    private final LinkedList<TAdult> ETR1;
-    private final LinkedList<TChild> ETR2;
+    private final List<TAdult> ETR1;
+    private final List<TChild> ETR2;
     private int count = 0;
     private int count2 = 0;
     
@@ -25,8 +26,8 @@ public class METH implements IPatient_Eth, IETH {
     
     public METH(int size) {
         this.size = size;
-        ETR1 = new LinkedList<>();
-        ETR2 = new LinkedList<>();
+        ETR1 = new ArrayList<>();
+        ETR2 = new ArrayList<>();
         rl = new ReentrantLock();
         r2 = new ReentrantLock();
         cNotEmpty = rl.newCondition();
@@ -82,7 +83,8 @@ public class METH implements IPatient_Eth, IETH {
                 }
             } catch( InterruptedException ex ) {}
             System.err.print("\nAdult list size is: " + ETR1.size());
-            TAdult adultRemoved = ETR1.removeFirst();
+            TAdult adultRemoved = ETR1.get(0);
+            ETR1.remove(0);
             System.out.println("\n Adult Removed-> "+ adultRemoved.getIdAdult());
             count--;
             cNotFull.signal();
@@ -103,7 +105,8 @@ public class METH implements IPatient_Eth, IETH {
                 }
             } catch( InterruptedException ex ) {}
             System.err.print("\nChild list size is: " + ETR2.size());
-            TChild childRemoved = ETR2.removeFirst();
+            TChild childRemoved = ETR2.get(0);
+            ETR2.remove(0);
             System.out.println("\n Child removed-> "+ childRemoved.getIdChild());
             count2--;
             cNotFull2.signal();
