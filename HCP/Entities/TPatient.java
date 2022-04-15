@@ -5,26 +5,26 @@
 /**
  * Thread representing one Entity
  */
-package Process1.Entities;
+package HCP.Entities;
 
-import Process1.Monitor.Manchester_Fifo;
+import HCP.Monitor.Fifo;
 
 /**
  *
  * @author user
  */
-public class Patient extends Thread {
+public class TPatient extends Thread {
     private final int tE1Id;                    // Thread Id
-    private String priority;                    // Priority
+    private String priority;    
+    private Fifo<TPatient> entrance_hall;                // Priority
     
     
-    public Patient(int tE1Id) {
+    public TPatient(int tE1Id, Fifo<TPatient> entrance_hall) {
         this.tE1Id = tE1Id;
     }
     @Override
     public void run() {
-        // state machine for the Entity1 (Thread)
-        // for example
+        this.entrance_hall.put(this);
         
     }
     public void setPatientPriority(String priority){

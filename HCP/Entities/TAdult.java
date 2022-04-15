@@ -1,6 +1,6 @@
 package HCP.Entities;
 
-public class TAdult extends Thread {
+public class TAdult extends TPatient {
 
     private final IPatient_Eth adult;
     private final int id;

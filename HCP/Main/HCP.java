@@ -13,6 +13,7 @@ package HCP.Main;
  * @author user
  */
 public class HCP {
+    private String sim_status = "Stopped";
     private int total_adult_patients;
     private int total_children_patients;
     private int total_seats;
