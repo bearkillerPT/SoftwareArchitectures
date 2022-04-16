@@ -26,6 +26,7 @@ public class Process1 {
             System.out.println("Something went wrong before sending the Configuration!");
         }
         CCPClient.sendCommand(CCPGui.getConfiguration());
+        CCPClient.sendCommand("Start");
         System.out.println("Settings Config Sent!");
     }
 

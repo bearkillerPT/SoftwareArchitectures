@@ -7,6 +7,7 @@
  */
 package HCP.Main;
 
+import HCP.Monitor.METH;
 
 /**
  *
@@ -21,6 +22,10 @@ public class HCP {
     private int mdt;
     private int pyt;
     private int time_to_move;
+    private FIFO<TPatient> entrance_hall;
+    private METH<TPatient> waiting_hall;
+    private METH<TPatient> medical_hall;
+
     public HCP( int total_adult_patients,int total_children_patients,int total_seats,int evt,int mdt,int pyt,int time_to_move){
         this.total_adult_patients = total_adult_patients;
         this.total_children_patients = total_children_patients;
@@ -29,5 +34,20 @@ public class HCP {
         this.mdt = mdt;
         this.pyt = pyt;
         this.time_to_move = time_to_move;
+        this.entrance_hall = new FIFO<TPatient>();
+    }
+
+    public FIFO<TPatient> getEntranceHall() {
+        return this.entrance_hall;
+    }
+
+    public void setSimStatus(String status) {
+        this.sim_status = status;
+    }
+    public int getTotalAdults() {
+        return this.total_adult_patients;
+    }
+    public int getTotalChildren() {
+        return this.total_children_patients;
     }
 }
