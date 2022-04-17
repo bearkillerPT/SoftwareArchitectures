@@ -35,7 +35,8 @@ public class MWTH implements INurse_Wth, ICallCentre_Wth{
             while (isFull()){
                 cNotFull.await();
             }
-            adult.setPatientId(WTN++);
+            WTN++;
+            adult.setPatientId(WTN);
             WTR1.add(adult);
             System.out.println("\nAdult: "+ adult.getIdAdult()+" is in the Waiting Hall");
             count++;
@@ -56,13 +57,10 @@ public class MWTH implements INurse_Wth, ICallCentre_Wth{
                 }
             } catch( InterruptedException ex ) {}
             int dos = 4;
-            int id_adult=-1;
+            int id_adult=9999;
             
             for(int i = 0; i<WTR1.size();i++){
-                if(WTR1.get(i).getDos()==0){
-                    id_adult=i;
-                    break;
-                }else if(WTR1.get(i).getDos()<dos){
+                if(WTR1.get(i).getDos()<=dos && WTR1.get(i).getIdAdult() < id_adult){
                     dos=WTR1.get(i).getDos();
                     id_adult =i;
                 }
@@ -70,7 +68,7 @@ public class MWTH implements INurse_Wth, ICallCentre_Wth{
             adultRemoved = WTR1.get(id_adult);
             WTR1.remove(id_adult);
             count--;
-            System.out.println("\nAdult: "+ adultRemoved.getIdAdult()+" left the Waiting Hall");
+            System.out.println("\nAdult: "+ adultRemoved.getIdAdult()+";Dos:"+adultRemoved.getDos()+" left the Waiting Hall");
             cNotFull.signal();
         }
         finally {

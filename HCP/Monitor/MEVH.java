@@ -58,7 +58,7 @@ public class MEVH implements INurse_Evh, IPatient_Evh {
             }
             adultRemoved = EVR1.get(0);
             EVR1.remove(0);
-            adultRemoved.setDos(1);
+            adultRemoved.setDos(random.nextInt(2));
             System.out.println("\nAdult: " + adultRemoved.getIdAdult() + " left the Evaluation Hall");
             cNotFull.signal();
         } finally {
