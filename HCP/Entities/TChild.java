@@ -20,7 +20,7 @@ public class TChild extends Thread {
             try {
                 Thread.sleep(2000);
                 System.out.printf("\nChild[%d]: Analyzed", id);
-                child.putEtr2(new TChild(child, id));
+                child.putEtr(new TChild(child, id));
             } catch (Exception e) { }
     }
 }

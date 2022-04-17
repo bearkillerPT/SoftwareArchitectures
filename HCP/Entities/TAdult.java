@@ -32,7 +32,7 @@ public class TAdult extends TPatient {
     public void run() {
             try {
                 Thread.sleep(2000);
-                adult.putEtr1(new TAdult(adult, id, dos));
+                adult.putEtr(new TAdult(adult, id, dos));
             } catch (Exception e) { }
     }
 }
