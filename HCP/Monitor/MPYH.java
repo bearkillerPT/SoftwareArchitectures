@@ -15,7 +15,7 @@ public class MPYH implements IDoctor_Pyh, ICashier_Pyh{
     private final Condition cNotFull;
     private final Condition cNotEmpty;
     
-    TAdult adultRemoved;
+    private TAdult adultRemoved;
     
     public MPYH() {
         PYH = new ArrayList<>();

@@ -6,7 +6,6 @@ public class TChild extends Thread {
     private final ICallCentre_Evh child;
     private final int id;
     private final int dos;
-    int counter=0;
     
     public TChild(ICallCentre_Evh child, int id, int dos) {
         this.child = child;

@@ -18,7 +18,7 @@ public class MWTH implements INurse_Wth, ICallCentre_Wth{
     private int count = 0;
     private int WTN = 0;
     
-    TAdult adultRemoved;
+    private TAdult adultRemoved;
     
     public MWTH(int size) {
         this.size = size;

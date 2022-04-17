@@ -25,7 +25,7 @@ public class METH implements ICallCentre_Evh, ICallCentre_Eth {
     private final Condition cNotFull2;
     private final Condition cNotEmpty2;
 
-    TAdult adultRemoved;
+    private TAdult adultRemoved;
 
     public METH(int size) {
         this.size = size;

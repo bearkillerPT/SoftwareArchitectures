@@ -7,7 +7,6 @@ public class TCashier extends Thread{
     private final Random random = new Random();
     
     private final ICashier_Pyh cashier;
-    private TAdult adult;
     private final int pyt;
     
     public TCashier(ICashier_Pyh cashier, int pyt) {
@@ -22,7 +21,7 @@ public class TCashier extends Thread{
                 if(pyt!=0){
                     Thread.sleep(random.nextInt(pyt));
                 }
-                adult = cashier.getPayment();
+                cashier.getPayment();
             } catch (Exception e) { }
         }
     }
