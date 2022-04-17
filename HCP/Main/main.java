@@ -37,7 +37,7 @@ public class main {
         
         TAdult adult;
         TCallCentre cc;
-        TNurse nurse1;
+        TNurse nurse;
         TDoctor doc;
         TCashier cashier;
         
@@ -55,12 +55,16 @@ public class main {
         
         cc = new TCallCentre((ICallCentre_Eth)mEth,(ICallCentre_Wth)mWth,(IPatient_Evh)mEvh, (ICallCentre_Mdw)mMdw);
         cc.start();
+
+        for(int i = 0; i < 4;i++){
+            nurse = new TNurse((INurse_Evh)mEvh, (INurse_Wth)mWth, EVT);
+            nurse.start();
+        }
         
-        nurse1 = new TNurse((INurse_Evh)mEvh, (INurse_Wth)mWth, EVT);
-        nurse1.start();
-        
-        doc = new TDoctor((IDoctor_Mdw)mMdw, (IDoctor_Pyh)mPyh, MDT);
-        doc.start();
+        for(int i = 0; i < 4;i++){
+            doc = new TDoctor((IDoctor_Mdw)mMdw, (IDoctor_Pyh)mPyh, MDT);
+            doc.start();
+        }
         
         cashier = new TCashier((ICashier_Pyh)mPyh, PYT);
         cashier.start();
