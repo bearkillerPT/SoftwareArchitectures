@@ -8,6 +8,10 @@
 package HCP.Main;
 
 import HCP.Monitor.METH;
+import HCP.Monitor.MEVH;
+import HCP.Monitor.MMDW;
+import HCP.Monitor.MPYH;
+import HCP.Monitor.MWTH;
 
 /**
  *
@@ -82,12 +86,12 @@ public class HCP {
     }
 
     public int getEVT(){
-        return this.EVT;
+        return this.evt;
     }
     public int getMDT(){
-        return this.MDT;
+        return this.mdt;
     }
     public int getPYT(){
-        return this.PYT;
+        return this.pyt;
     }
 }

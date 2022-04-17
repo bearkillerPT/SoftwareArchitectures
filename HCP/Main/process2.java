@@ -12,33 +12,40 @@ import HCP.Entities.INurse_Evh;
 import HCP.Entities.INurse_Wth;
 import HCP.Entities.IPatient_Evh;
 import HCP.Entities.TAdult;
+import HCP.Entities.TCallCentre;
+import HCP.Entities.TCashier;
 import HCP.Entities.TChild;
+import HCP.Entities.TDoctor;
+import HCP.Entities.TNurse;
 
 import java.util.concurrent.TimeUnit;
 import HCP.Main.HCP;
 
-public class Process2 {
+public class process2 {
     private Server comServer;
     private HCP hosp;
-    private TPatient[] patients;
+    TAdult adult;
+    int etn = 0;
 
-    public Process2() {
+    public process2() {
         this.comServer = new Server();
         String cmd = "";
-        while ((cmd = this.comServer.getCommand()) == "")
-            ;
+        while ((cmd = this.comServer.getCommand()) == "");
+        
         System.out.println("CMD Received: " + cmd);
         setConfigurationAndInitializeHCP(this.comServer.getCommand());
         int total_patients = this.hosp.getTotalAdults()+  this.hosp.getTotalChildren();
         for(int i = 0; i < this.hosp.getTotalAdults(); i++){
-            patients[i] = new TAdult(i, hosp.getEntranceHall());
-            patients[i].start();
+            etn++;
+            adult = new TAdult(hosp.getMEth(), etn, -1);
+            adult.start();
 
         }
-        for(int i = this.hosp.getTotalAdults(); i < total_patients; i++){
-            patients[i] = new TChild(i, hosp.getEntranceHall());
-            patients[i].start();
-        }
+//        for(int i = this.hosp.getTotalAdults(); i < total_patients; i++){
+//            etn++;
+//            patients[i] = new TChild(i, this.hosp.getMEth());
+//            patients[i].start();
+//        }
         
         TCallCentre cc;
         TNurse nurse1;
@@ -47,13 +54,13 @@ public class Process2 {
         cc = new TCallCentre((ICallCentre_Eth)this.hosp.getMEth(),(ICallCentre_Wth)this.hosp.getMWth(),(IPatient_Evh)this.hosp.getMEvh(), (ICallCentre_Mdw)this.hosp.getMMdw());
         cc.start();
         
-        nurse1 = new TNurse((INurse_Evh)this.hosp.getMEvh(), (INurse_Wth)this.hosp.getMWth(), this.hoes.getEVT());
+        nurse1 = new TNurse((INurse_Evh)this.hosp.getMEvh(), (INurse_Wth)this.hosp.getMWth(), this.hosp.getEVT());
         nurse1.start();
         
-        doc = new TDoctor((IDoctor_Mdw)this.hosp.getMMdw(), (IDoctor_Pyh)this.hosp.getMPyh(), this.hoes.getMDT());
+        doc = new TDoctor((IDoctor_Mdw)this.hosp.getMMdw(), (IDoctor_Pyh)this.hosp.getMPyh(), this.hosp.getMDT());
         doc.start();
         
-        cashier = new TCashier((ICashier_Pyh)this.hosp.getMPyh(), this.hoes.getPYT());
+        cashier = new TCashier((ICashier_Pyh)this.hosp.getMPyh(), this.hosp.getPYT());
         cashier.start();
 
         while (true) {
@@ -105,6 +112,6 @@ public class Process2 {
     }
 
     public static void main(String args[]) {
-        Process2 p = new Process2();
+        process2 p = new process2();
     }
 }

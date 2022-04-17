@@ -1,14 +1,17 @@
 package HCP.Entities;
 
+
 public class TChild extends Thread {
 
-    private final IPatient_Eth child;
+    private final ICallCentre_Evh child;
     private final int id;
+    private final int dos;
     int counter=0;
     
-    public TChild(IPatient_Eth child, int id) {
+    public TChild(ICallCentre_Evh child, int id, int dos) {
         this.child = child;
         this.id = id;
+        this.dos = dos;
     }
     
     public int getIdChild() {
@@ -18,9 +21,8 @@ public class TChild extends Thread {
     @Override
     public void run() {
             try {
+                child.putEtr(new TChild(child, id, dos));
                 Thread.sleep(2000);
-                System.out.printf("\nChild[%d]: Analyzed", id);
-                child.putEtr(new TChild(child, id));
             } catch (Exception e) { }
     }
 }
