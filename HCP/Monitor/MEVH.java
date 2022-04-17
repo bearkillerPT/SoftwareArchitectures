@@ -2,34 +2,34 @@ package HCP.Monitor;
 
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.Random;
+
+import HCP.Entities.IPatient_Evh;
 import java.util.ArrayList;
 import java.util.List;
-import HCP.Entities.ICallCentre_Eth;
-import HCP.Entities.ICallCentre_Evh;
+import HCP.Entities.INurse_Evh;
 import HCP.Entities.TAdult;
 
-public class METH implements ICallCentre_Evh, ICallCentre_Eth {
+public class MEVH implements INurse_Evh, IPatient_Evh {
 
-    private final List<TAdult> ETR1;
-    private int count = 0;
+    private final Random random = new Random();
 
-    private final int size;
+    private final List<TAdult> EVR1;
     private final ReentrantLock rl;
     private final Condition cNotFull;
     private final Condition cNotEmpty;
     
     TAdult adultRemoved;
 
-    public METH(int size) {
-        this.size = size;
-        ETR1 = new ArrayList<>();
+    public MEVH() {
+        EVR1 = new ArrayList<>();
         rl = new ReentrantLock();
         cNotEmpty = rl.newCondition();
         cNotFull = rl.newCondition();
     }
 
     @Override
-    public void putEtr1(TAdult adult) {
+    public void putEvr1(TAdult adult) {
         try {
             rl.lock();
             try {
@@ -38,9 +38,8 @@ public class METH implements ICallCentre_Evh, ICallCentre_Eth {
                 }
             } catch (InterruptedException ex) {
             }
-            ETR1.add(adult);
-            System.out.print("\nAdult: " + adult.getIdAdult() + " is in the Entrance Hall");
-            count++;
+            EVR1.add(adult);
+            System.out.println("\nAdult: " + adult.getIdAdult() + " is in the Evaluation Hall");
             cNotEmpty.signal();
         } finally {
             rl.unlock();
@@ -48,7 +47,7 @@ public class METH implements ICallCentre_Evh, ICallCentre_Eth {
     }
 
     @Override
-    public TAdult getAdult() {
+    public TAdult evaluate_dos() {
         try {
             rl.lock();
             try {
@@ -57,11 +56,10 @@ public class METH implements ICallCentre_Evh, ICallCentre_Eth {
                 }
             } catch (InterruptedException ex) {
             }
-
-            adultRemoved = ETR1.get(0);
-            ETR1.remove(0);
-            System.out.println("\nAdult: " + adultRemoved.getIdAdult() + " removed from Entrance Hall");
-            count--;
+            adultRemoved = EVR1.get(0);
+            EVR1.remove(0);
+            adultRemoved.setDos(1);
+            System.out.println("\nAdult: " + adultRemoved.getIdAdult() + " left the Evaluation Hall");
             cNotFull.signal();
         } finally {
             rl.unlock();
@@ -70,10 +68,10 @@ public class METH implements ICallCentre_Evh, ICallCentre_Eth {
     }
 
     private boolean isFull() {
-        return count == size;
+        return EVR1.size() == 1;
     }
-    
+
     private boolean isEmpty() {
-        return ETR1.isEmpty();
+        return EVR1.isEmpty();
     }
 }
