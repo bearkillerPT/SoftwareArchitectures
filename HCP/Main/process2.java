@@ -27,7 +27,7 @@ public class process2 {
     TAdult adult;
     int etn = 0;
 
-    public process2() {
+    public void process2() {
         this.comServer = new Server();
         String cmd = "";
         while ((cmd = this.comServer.getCommand()) == "");
@@ -113,5 +113,6 @@ public class process2 {
 
     public static void main(String args[]) {
         process2 p = new process2();
+        p.process2();
     }
 }
