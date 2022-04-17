@@ -14,12 +14,13 @@ public class MEVH implements INurse_Evh, IPatient_Evh {
 
     private final Random random = new Random();
 
+    private int count = 0;
     private final List<TAdult> EVR1;
     private final ReentrantLock rl;
     private final Condition cNotFull;
     private final Condition cNotEmpty;
     
-    TAdult adultRemoved;
+    private TAdult adultRemoved;
 
     public MEVH() {
         EVR1 = new ArrayList<>();
@@ -39,6 +40,7 @@ public class MEVH implements INurse_Evh, IPatient_Evh {
             } catch (InterruptedException ex) {
             }
             EVR1.add(adult);
+            count++;
             System.out.println("\nAdult: " + adult.getIdAdult() + " is in the Evaluation Hall");
             cNotEmpty.signal();
         } finally {
@@ -58,6 +60,7 @@ public class MEVH implements INurse_Evh, IPatient_Evh {
             }
             adultRemoved = EVR1.get(0);
             EVR1.remove(0);
+            count--;
             adultRemoved.setDos(random.nextInt(2));
             System.out.println("\nAdult: " + adultRemoved.getIdAdult() + " left the Evaluation Hall");
             cNotFull.signal();
@@ -68,7 +71,7 @@ public class MEVH implements INurse_Evh, IPatient_Evh {
     }
 
     private boolean isFull() {
-        return EVR1.size() == 1;
+        return EVR1.size() == 4;
     }
 
     private boolean isEmpty() {

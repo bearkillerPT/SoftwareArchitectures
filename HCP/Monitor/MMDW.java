@@ -10,12 +10,13 @@ import HCP.Entities.TAdult;
 
 public class MMDW implements IDoctor_Mdw, ICallCentre_Mdw{
     
+    private int count = 0;
     private final List<TAdult> MDW;
     private final ReentrantLock rl;
     private final Condition cNotFull;
     private final Condition cNotEmpty;
     
-    TAdult adultRemoved;
+    private TAdult adultRemoved;
     
     public MMDW() {
         MDW = new ArrayList<>();
@@ -32,6 +33,7 @@ public class MMDW implements IDoctor_Mdw, ICallCentre_Mdw{
                 cNotFull.await();
             }
             MDW.add(adult);
+            count++;
             System.out.println("\nAdult: "+ adult.getIdAdult()+" is in the Medical Waiting Hall");
             cNotEmpty.signal();
         } catch ( InterruptedException ex ) {}
@@ -51,6 +53,7 @@ public class MMDW implements IDoctor_Mdw, ICallCentre_Mdw{
             } catch( InterruptedException ex ) {}
             adultRemoved = MDW.get(0);
             MDW.remove(0);
+            count--;
             System.out.println("\nAdult: "+ adultRemoved.getIdAdult()+" left the Medical Waiting Hall");
             cNotFull.signal();
         }
@@ -61,7 +64,7 @@ public class MMDW implements IDoctor_Mdw, ICallCentre_Mdw{
     }
     
     private boolean isFull() {
-        return MDW.size()==1;
+        return MDW.size()==4;
     }
     
     private boolean isEmpty(){
