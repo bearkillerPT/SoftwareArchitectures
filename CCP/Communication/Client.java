@@ -2,7 +2,13 @@ package CCP.Communication;
 
 import java.io.PrintWriter;
 import java.net.Socket;
-
+/**
+ *
+ * @author Gil Teixeira
+ */
+/**
+ * The Client that allows to send commands from the CCP to the HCP!
+*/
 public class Client {
     private Socket client;
     private PrintWriter out;

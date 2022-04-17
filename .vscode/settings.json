@@ -1,5 +1,14 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
+    ],
+    "java.project.sourcePaths": [
+        "CCP\\Main",
+        "CCP\\Logger",
+        "CCP\\Communication",
+        "HCP\\Monitor",
+        "HCP\\Main",
+        "HCP\\Entities",
+        "HCP\\Comunication"
     ]
 }

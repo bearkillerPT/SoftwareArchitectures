@@ -5,7 +5,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+/**
+ *
+ * @author Gil Teixeira
+ */
+/**
+ * The server to wich CCP GUI's can connect to configure and control the simulation
+*/
 public class Server {
     private final int portNumber = 4445;
     private ServerSocket serverSocket;

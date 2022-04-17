@@ -1,14 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package CCP.Main;
 import java.util.concurrent.TimeUnit;
 import CCP.Communication.Client;
 import CCP.Main.ControlGUI;
 /**
  *
- * @author user
+ * @author Gil Teixeira
+ * 
+ * Main CCP process that shows a gui and is able to control and configure the simulation though the client
+ * 
  */
 public class Process1 {
 
