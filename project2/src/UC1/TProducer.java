@@ -14,6 +14,7 @@ public class TProducer extends Thread{
     private List<String> values = new ArrayList<>();
     private List<String> sensor_id = new ArrayList<>();
     ProducerRecord<String, String> record;
+    KafkaProducer<String, String> producer;
             
     public TProducer(List sensor_id, List values, Properties prop) {
         this.prop = prop;
@@ -22,10 +23,9 @@ public class TProducer extends Thread{
         
     }
     
-    KafkaProducer<String, String> producer = new KafkaProducer<>(prop);
-    
     @Override
     public void run(){
+        producer = new KafkaProducer<>(prop);
         for(int i = 0; i < sensor_id.size();i++){
             record = new ProducerRecord<>("sensor", sensor_id.get(i), values.get(i));
             producer.send(record);
