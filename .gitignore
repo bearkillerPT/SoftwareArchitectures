@@ -1,2 +1,6 @@
 *.class
 /project2/kafka/*
+/project2/nbproject/private/
+/project2/build/
+/Porject3/nbproject/private/
+/Porject3/build/
