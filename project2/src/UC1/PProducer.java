@@ -23,11 +23,25 @@ class PProducer {
         return res;
     }
 
+
     public static void main(String[] args) {
+
         PProducer prod = new PProducer();
         String data = "";
+        List<String> sensors = new ArrayList<String>();
+        List<String> values = new ArrayList<String>();
+        
         while ((data = prod.getData()) != null) {
-            System.out.println(data);
+            data.split(";");
+            String sensor_field[] = fields[0].split(":");
+            sensors.add(sensor_field[1]);
+            String temp[] = fields[1].split(":");
+            String timestamp[] = fields[2].split(":");
+            values.add(temp[1] + ";" + timestamp[1]);
         }
+
+        TProducer tp = new TProducer(sensors, values);
+        tp.start();
+        
     }
 }
