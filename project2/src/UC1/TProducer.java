@@ -30,7 +30,7 @@ public class TProducer extends Thread{
             record = new ProducerRecord<>("sensor", sensor_id.get(i), values.get(i));
             producer.send(record);
             producer.flush();
-            producer.close();
         }
+        producer.close();
     }
 }
