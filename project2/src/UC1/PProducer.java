@@ -35,13 +35,24 @@ class PProducer {
         List<String> sensors = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
         String fields[];
+        String time_fields[];
+        int present_record_time = 0;
+        int previous_record_time = -1;
 
         while ((data = prod.getData()) != null) {
+//            System.out.println(prod.getData());
             fields = data.split(";");
-            String sensor_field[] = fields[0].split(":");
-            sensors.add(sensor_field[1]);
+            time_fields = fields[2].split(":");
+            
+            if(previous_record_time > Integer.valueOf(time_fields[1])){
+                    System.err.println("ORDER MIXED!!");
+                }
+            previous_record_time = present_record_time;
+            sensors.add(fields[0]);
             values.add(fields[1] + ";" + fields[2]);
         }
+        System.err.println("Records recieved from PSource: " + sensors.size());
+        
         Properties prop = new Properties();
         prop.setProperty("bootstrap.servers", "127.0.0.1:9092");
         prop.setProperty("key.serializer", StringSerializer.class.getName());
