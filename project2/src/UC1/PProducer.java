@@ -40,9 +40,7 @@ class PProducer {
             fields = data.split(";");
             String sensor_field[] = fields[0].split(":");
             sensors.add(sensor_field[1]);
-            String temp[] = fields[1].split(":");
-            String timestamp[] = fields[2].split(":");
-            values.add(temp[1] + ";" + timestamp[1]);
+            values.add(fields[1] + ";" + fields[2]);
         }
         Properties prop = new Properties();
         prop.setProperty("bootstrap.servers", "127.0.0.1:9092");
