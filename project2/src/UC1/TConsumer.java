@@ -17,25 +17,31 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
  *
  * @author junio
  */
-public class TConsumer extends Thread{
-    
+public class TConsumer extends Thread {
+
     Properties prop;
     ConsumerRecord<String, String> record;
     KafkaConsumer<String, String> consumer;
+    final Logger logger;
 
-    public TConsumer(Properties prop) {
+    public TConsumer(Properties prop, Logger logger) {
         this.prop = prop;
+        this.logger = logger;
     }
-    
+
     @Override
-    public void run(){
+    public void run() {
         consumer = new KafkaConsumer<>(prop);
         consumer.subscribe(Arrays.asList("sensor"));
-        while(true){
+        while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-            for(ConsumerRecord record: records){
-                System.out.println("Record id : " + String.valueOf(record.key()));
-                System.out.println("Record values : " + String.valueOf(record.value()));
+            for (ConsumerRecord record : records) {
+                logger.info("Recieved new Record: \n" + "Key: " + record.key() + ", " + "Value: " + record.value() +
+                        "Key: " + record.key() + ", " +
+                        "Value: " + record.value() + ", " +
+                        "Topic: " + record.topic() + ", " +
+                        "Partition: " + record.partition() + ", " +
+                        "Offset: " + record.offset() + "\n");
             }
         }
     }

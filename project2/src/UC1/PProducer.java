@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class PProducer {
     private Socket client;
@@ -30,11 +33,16 @@ class PProducer {
 
     public static void main(String[] args) {
 
+        String log4jConfPath = "../kakfa_2.13-3.1.0/config/log4j.properties";
+        PropertyConfigurator.configure(log4jConfPath);
+
         PProducer prod = new PProducer();
         String data = "";
         List<String> sensors = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
         String fields[];
+        final Logger logger = LoggerFactory.getLogger(Producer.class);
+
 
         while ((data = prod.getData()) != null) {
             fields = data.split(";");
@@ -49,7 +57,7 @@ class PProducer {
         prop.setProperty("key.serializer", StringSerializer.class.getName());
         prop.setProperty("value.serializer", StringSerializer.class.getName());
 
-        TProducer tp = new TProducer(sensors, values, prop);
+        TProducer tp = new TProducer(sensors, values, prop, logger);
         tp.start();
         
     }
