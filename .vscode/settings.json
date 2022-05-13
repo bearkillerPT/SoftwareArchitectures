@@ -1,0 +1,5 @@
+{
+    "java.project.referencedLibraries": [
+        "project2/kafka_2.13-3.1.0/libs/*",
+    ]
+}

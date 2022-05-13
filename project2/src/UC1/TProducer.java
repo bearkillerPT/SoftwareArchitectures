@@ -4,8 +4,11 @@ package UC1;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.slf4j.Logger;
 
 
 public class TProducer extends Thread{

@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
@@ -42,7 +43,6 @@ class PProducer {
         List<String> values = new ArrayList<String>();
         String fields[];
         final Logger logger = LoggerFactory.getLogger(Producer.class);
-
 
         while ((data = prod.getData()) != null) {
             fields = data.split(";");

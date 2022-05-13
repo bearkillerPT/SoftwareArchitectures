@@ -5,6 +5,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.kafka.clients.consumer.Consumer;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -25,7 +26,7 @@ public class PConsumer {
         PropertyConfigurator.configure(log4jConfPath);
         
         final Logger logger = LoggerFactory.getLogger(Consumer.class);
-        
+
         String topicName = "sensor";
         String groupName = "sensorGroup";
         Properties prop = new Properties();
