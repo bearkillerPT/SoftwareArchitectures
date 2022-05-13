@@ -19,12 +19,14 @@ import org.apache.kafka.clients.consumer.Consumer;
 public class PConsumer {
     public static void main(String[] args) {
         String topicName = "Sensor";
-        String groupName = "sensorGroup";
+        String groupName = "sensor-group";
+
         Properties prop = new Properties();
         prop.setProperty("bootstrap.servers", "127.0.0.1:9092");
         prop.setProperty("key.deserializer", StringDeserializer.class.getName());
         prop.setProperty("value.deserializer", StringDeserializer.class.getName());
         prop.setProperty("group.id", groupName);
+
         TConsumer tc = new TConsumer(prop);
         tc.start();
     }

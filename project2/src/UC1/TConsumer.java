@@ -30,12 +30,7 @@ public class TConsumer extends Thread {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
             for (ConsumerRecord record : records) {
-                System.out.println("Recieved new Record: \n" + "Key: " + record.key() + ", " + "Value: " + record.value() +
-                        "Key: " + record.key() + ", " +
-                        "Value: " + record.value() + ", " +
-                        "Topic: " + record.topic() + ", " +
-                        "Partition: " + record.partition() + ", " +
-                        "Offset: " + record.offset() + "\n");
+                System.out.println("Recieved new Record: " + "Key: " + record.key() + ", " + "Value: " + record.value());
             }
         }
     }
