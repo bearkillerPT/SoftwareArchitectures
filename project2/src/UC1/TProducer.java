@@ -10,6 +10,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 public class TProducer extends Thread{
     
+    private final PProducerGUI gui;
     Properties prop;
     private List<String> values = new ArrayList<>();
     private List<String> sensor_id = new ArrayList<>();
@@ -17,6 +18,7 @@ public class TProducer extends Thread{
     KafkaProducer<String, String> producer;
             
     public TProducer(List sensor_id, List values, Properties prop) {
+        this.gui = new PProducerGUI("" + sensor_id);
         this.prop = prop;
         this.sensor_id = sensor_id;
         this.values = values;
@@ -26,6 +28,7 @@ public class TProducer extends Thread{
     public void run(){
         producer = new KafkaProducer<>(prop);
         for(int i = 0; i < sensor_id.size();i++){
+            this.gui.addRecord(sensor_id.get(i) + ":" +values.get(i) + "\n");
             record = new ProducerRecord<>("Sensor", sensor_id.get(i), values.get(i));
             producer.send(record);
             producer.flush();
