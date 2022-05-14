@@ -24,8 +24,11 @@ public class PProducerGUI extends JFrame {
     JTextArea logs = new JTextArea(5, 50);
     JLabel totalRecordsValueLabel = new JLabel("0");
     JTextArea totalRecordBySensorId = new JTextArea(5, 50);
-    JScrollPane scroll = new JScrollPane(logs,
+    JScrollPane scrollLogs = new JScrollPane(logs,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            
+    JScrollPane scrollTotalRecordBySensorId = new JScrollPane(totalRecordBySensorId,
+    JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
     public PProducerGUI(String title) {
         this.records_count = 0;
@@ -33,12 +36,12 @@ public class PProducerGUI extends JFrame {
         this.setTitle("Producer" + title + " GUI");
         this.setLayout(new GridLayout(2, 1));
         this.recordsPanel.add(this.recordsLabel);
-        this.recordsPanel.add(this.scroll);
+        this.recordsPanel.add(this.scrollLogs);
         this.logs.setEditable(false);
         this.totalRecordBySensorId.setEditable(false);
         this.totalRecordBySensorId.setEditable(false);
         this.totalRecordsPanel.add(this.totalRecordsLabel);
-        this.totalRecordsPanel.add(this.totalRecordsValueLabel);
+        this.totalRecordsPanel.add(this.scrollTotalRecordBySensorId);
 
 
         this.totalRecordBySensorIdPanel.add(this.totalRecordBySensorIdLabel);
@@ -52,21 +55,21 @@ public class PProducerGUI extends JFrame {
         pack();
     }
 
-    public void addRecord(String record) {
-        this.logs.setText(this.logs.getText() + record);
+    public void addRecordsBySensorId(String key, String value) {
+        this.logs.setText(this.logs.getText() + key + ":" + value + "\n");
         this.records_count++;
         this.totalRecordsValueLabel.setText("" + this.records_count);
         this.logs.setCaretPosition(this.logs.getDocument().getLength());
-    }
-
-    public void addRecordsBySensorId(String key, String value) {
         if (this.records_by_sensor_id.containsKey(key)) {
-            ArrayList<String> current_vals = new ArrayList<String>(Arrays.asList(this.records_by_sensor_id.get(key)));
+            ArrayList<String> current_vals = new ArrayList(Arrays.asList(this.records_by_sensor_id.get(key)));
             current_vals.add(value);
             this.records_by_sensor_id.put(key, current_vals.toArray(new String[current_vals.size()]));
         } else {
             String[] current_vals = {value};
             this.records_by_sensor_id.put(key, current_vals);
         }
+        this.totalRecordBySensorId.setText(this.records_by_sensor_id.toString()+ "\n");
+        this.totalRecordBySensorId.setCaretPosition(this.totalRecordBySensorId.getDocument().getLength());
+        
     }
 }

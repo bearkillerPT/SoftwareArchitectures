@@ -28,7 +28,7 @@ public class TProducer extends Thread{
     public void run(){
         producer = new KafkaProducer<>(prop);
         for(int i = 0; i < sensor_id.size();i++){
-            this.gui.addRecord(sensor_id.get(i) + ":" +values.get(i) + "\n");
+            this.gui.addRecordsBySensorId(sensor_id.get(i), values.get(i));
             record = new ProducerRecord<>("Sensor", sensor_id.get(i), values.get(i));
             producer.send(record);
             producer.flush();
