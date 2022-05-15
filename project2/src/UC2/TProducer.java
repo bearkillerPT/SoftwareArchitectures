@@ -51,7 +51,7 @@ public class TProducer extends Thread{
             previous_record_time = present_record_time;
             producer = new KafkaProducer<>(prop);
             sensor_id = fields[0].split(":");
-            record = new ProducerRecord<>("Sensor", Integer.valueOf(sensor_id[1]), fields[0], fields[1] + ";" + fields[2]);
+            record = new ProducerRecord<>("Sensor", (Integer.valueOf(sensor_id[1])-1), fields[0], fields[1] + ";" + fields[2]);
             producer.send(record);
             System.out.println("Record sent! By Partition-" + record.partition() + ":Values - " + fields[1] + ";" + fields[2]);
             producer.flush();

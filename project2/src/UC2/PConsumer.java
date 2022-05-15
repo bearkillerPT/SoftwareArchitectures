@@ -15,7 +15,7 @@ public class PConsumer {
         prop.setProperty("value.deserializer", StringDeserializer.class.getName());
         prop.setProperty("group.id", groupName);
         TConsumer tc;
-        for(int i = 1; i < 7; i++){
+        for(int i = 0; i < 6; i++){
             tc = new TConsumer(prop, i);
             tc.start();
         }
