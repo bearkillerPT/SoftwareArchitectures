@@ -14,7 +14,7 @@ import javax.swing.*;
  */
 public class PProducerGUI extends JFrame {
     private int records_count;
-    HashMap<String, String[]> records_by_sensor_id = new HashMap<String, String[]>();
+    HashMap<String, Integer> records_by_sensor_id;
     JPanel recordsPanel = new JPanel();
     JPanel totalRecordsPanel = new JPanel();
     JPanel totalRecordBySensorIdPanel = new JPanel();
@@ -32,6 +32,7 @@ public class PProducerGUI extends JFrame {
 
     public PProducerGUI(String title) {
         this.records_count = 0;
+        this.records_by_sensor_id = new HashMap();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("Producer" + title + " GUI");
         this.setLayout(new GridLayout(2, 1));
@@ -39,13 +40,12 @@ public class PProducerGUI extends JFrame {
         this.recordsPanel.add(this.scrollLogs);
         this.logs.setEditable(false);
         this.totalRecordBySensorId.setEditable(false);
-        this.totalRecordBySensorId.setEditable(false);
         this.totalRecordsPanel.add(this.totalRecordsLabel);
-        this.totalRecordsPanel.add(this.scrollTotalRecordBySensorId);
+        this.totalRecordsPanel.add(this.totalRecordsValueLabel);
 
 
         this.totalRecordBySensorIdPanel.add(this.totalRecordBySensorIdLabel);
-        this.totalRecordBySensorIdPanel.add(this.totalRecordBySensorId);
+        this.totalRecordBySensorIdPanel.add(this.scrollTotalRecordBySensorId);
         
         this.getContentPane().add(this.recordsPanel);
         this.getContentPane().add(this.totalRecordsPanel);
@@ -61,12 +61,9 @@ public class PProducerGUI extends JFrame {
         this.totalRecordsValueLabel.setText("" + this.records_count);
         this.logs.setCaretPosition(this.logs.getDocument().getLength());
         if (this.records_by_sensor_id.containsKey(key)) {
-            ArrayList<String> current_vals = new ArrayList(Arrays.asList(this.records_by_sensor_id.get(key)));
-            current_vals.add(value);
-            this.records_by_sensor_id.put(key, current_vals.toArray(new String[current_vals.size()]));
+            this.records_by_sensor_id.put(key, this.records_by_sensor_id.get(key)+1);
         } else {
-            String[] current_vals = {value};
-            this.records_by_sensor_id.put(key, current_vals);
+            this.records_by_sensor_id.put(key, 1);
         }
         this.totalRecordBySensorId.setText(this.records_by_sensor_id.toString()+ "\n");
         this.totalRecordBySensorId.setCaretPosition(this.totalRecordBySensorId.getDocument().getLength());
