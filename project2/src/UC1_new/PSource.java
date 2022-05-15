@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 class PSource {
     private final int sourcePort = 3022;

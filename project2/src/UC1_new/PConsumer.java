@@ -3,18 +3,6 @@ package UC1_new;
 import java.util.Properties;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author gil-t
- */
-
-
-
 public class PConsumer {
     public static void main(String[] args) {
         
