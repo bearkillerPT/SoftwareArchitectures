@@ -1,5 +1,4 @@
 package UC2;
-
 import java.util.Properties;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.clients.consumer.Consumer;

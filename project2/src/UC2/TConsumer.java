@@ -1,6 +1,5 @@
 package UC2;
 
-import UC1.*;
 import static java.lang.Integer.parseInt;
 import java.time.Duration;
 import java.util.ArrayList;

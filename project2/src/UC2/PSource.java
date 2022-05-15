@@ -1,5 +1,4 @@
 package UC2;
-
 import java.io.File;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
