@@ -27,8 +27,7 @@ public class TProducer extends Thread{
         prop.setProperty("bootstrap.servers", "127.0.0.1:9092");
         prop.setProperty("key.serializer", StringSerializer.class.getName());
         prop.setProperty("value.serializer", StringSerializer.class.getName());
-        prop.setProperty("acks", "1");//default value
-        prop.setProperty("min.insync.replicas", "2");
+        prop.setProperty("acks", "0");
     }
 
     @Override
