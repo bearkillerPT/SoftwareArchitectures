@@ -18,9 +18,11 @@ public class TConsumer extends Thread {
     Properties prop;
     ConsumerRecord<String, String> record;
     KafkaConsumer<String, String> consumer;
+    private final PGUI gui;
 
     public TConsumer(Properties prop) {
         this.prop = prop;
+        this.gui = new PGUI("Consumer");
     }
 
     @Override
@@ -38,6 +40,7 @@ public class TConsumer extends Thread {
             for (ConsumerRecord record : records) {
                 records_counter ++;
                 fields = (record.value().toString()).split(";");
+                gui.addRecordsBySensorId(fields[0], fields.toString());
                 time_fields = fields[1].split(":");
                 if(previous_record_time > Integer.valueOf(time_fields[1])){
                     System.err.println("ORDER MIXED!!");

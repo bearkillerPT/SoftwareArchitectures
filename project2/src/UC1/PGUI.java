@@ -12,7 +12,7 @@ import javax.swing.*;
  *
  * @author gil-t
  */
-public class PProducerGUI extends JFrame {
+public class PGUI extends JFrame {
     private int records_count;
     HashMap<String, Integer> records_by_sensor_id;
     JPanel recordsPanel = new JPanel();
@@ -30,7 +30,7 @@ public class PProducerGUI extends JFrame {
     JScrollPane scrollTotalRecordBySensorId = new JScrollPane(totalRecordBySensorId,
     JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-    public PProducerGUI(String title) {
+    public PGUI(String title) {
         this.records_count = 0;
         this.records_by_sensor_id = new HashMap();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
