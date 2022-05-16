@@ -1,8 +1,0 @@
-Starting zookeeper server:
-.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
-
-Starting kafka server:
-.\bin\windows\kafka-server-start.bat .\config\server.properties
-
-Create topic:
-.\bin\windows\kafka-topics.bat --bootstrap-server 127.0.0.1:9092 --topic Sensor --create --partitions 3

@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 class PSource {
-    private final int sourcePort = 3001;
+    private final int sourcePort = 3022;
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
@@ -23,7 +23,7 @@ class PSource {
         try {
             this.clientSocket = this.serverSocket.accept();
             this.out = new PrintWriter(clientSocket.getOutputStream(), true);
-            //System.out.println("Accepted PProducer connection!");
+            System.out.println("Accepted PProducer connection!");
             out.println(message);
             this.clientSocket.close();
             this.out.close();
@@ -36,6 +36,7 @@ class PSource {
         PSource sourceServer = new PSource();
         try{
             File fp = new File("sensor.txt");
+//            for(String fileNames : fp.list()) System.out.println(fileNames);
             Scanner sc = new Scanner(fp);
             while(sc.hasNextLine()){
                 String sensor_id = sc.nextLine();
@@ -46,7 +47,6 @@ class PSource {
             sc.close();
         }catch(Exception e) {
             System.out.println(e);
-
         }
         
     }
