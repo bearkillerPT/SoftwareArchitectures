@@ -13,6 +13,7 @@ public class PConsumer {
         prop.setProperty("key.deserializer", StringDeserializer.class.getName());
         prop.setProperty("value.deserializer", StringDeserializer.class.getName());
         prop.setProperty("group.id", groupName);
+        prop.setProperty("auto.offset.reset", "earliest");
         TConsumer tc;
         for(int i = 1; i < 4; i++){
             tc = new TConsumer(prop, i);

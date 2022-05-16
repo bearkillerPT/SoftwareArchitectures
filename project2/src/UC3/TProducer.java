@@ -1,7 +1,8 @@
 package UC3;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -10,29 +11,54 @@ import org.apache.kafka.common.serialization.StringSerializer;
 
 public class TProducer extends Thread{
     
-    private List<String> values = new ArrayList<>();
-    private List<String> sensor_id = new ArrayList<>();
+    private Socket client;
+    private BufferedReader in;
     ProducerRecord<String, String> record;
     KafkaProducer<String, String> producer;
     Properties prop = new Properties();
-            
-    public TProducer(List sensor_id, List values) {
-        this.sensor_id = sensor_id;
-        this.values = values;
+    String res = "";
+    int previous_record_time = -1;
+    String fields[];
+    String time_fields[];
+    int present_record_time = 0;
+    String sensor_id[];
+
+    public TProducer() {
         prop.setProperty("bootstrap.servers", "127.0.0.1:9092");
         prop.setProperty("key.serializer", StringSerializer.class.getName());
         prop.setProperty("value.serializer", StringSerializer.class.getName());
+        prop.setProperty("acks", "1");//default value
+        prop.setProperty("batch.size", "16384");
+        prop.setProperty("linger.ms", "5");
     }
-    
+
     @Override
-    public void run(){
-        producer = new KafkaProducer<>(prop);
-        for(int i = 0; i < sensor_id.size();i++){
-            record = new ProducerRecord<>("Sensor", sensor_id.get(i), values.get(i));
+    public void run() {
+        while(true){
+        try {
+            this.client = new Socket("127.0.0.1", 3022);
+            this.in = new BufferedReader(
+                    new InputStreamReader(client.getInputStream()));
+            res = in.readLine();
+            this.client.close();
+            this.in.close();
+            producer = new KafkaProducer<>(prop);
+            fields = res.split(";");
+            time_fields = fields[2].split(":");
+
+            if (previous_record_time > Integer.valueOf(time_fields[1])) {
+                System.err.println("ORDER MIXED!!");
+            }
+            
+            previous_record_time = present_record_time;
+            sensor_id = fields[0].split(":");
+            record = new ProducerRecord<>("Sensor", Integer.valueOf(sensor_id[1]), fields[0], fields[1] + ";" + fields[2]);
             producer.send(record);
-            // System.out.println("Record sent! By Partition-"+record.partition() + ":Values - "+values.get(i));
+            System.out.println("Record sent! By Partition-" + record.partition() + ":Values - " + fields[1] + ";" + fields[2]);
+            producer.flush();
+            producer.close();
+        } catch (Exception e) {
         }
-        producer.flush();
-        producer.close();
+    }
     }
 }

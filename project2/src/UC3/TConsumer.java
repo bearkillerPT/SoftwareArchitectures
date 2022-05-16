@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package UC3;
 
 import static java.lang.Integer.parseInt;
@@ -9,6 +13,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 
+/**
+ *
+ * @author junio
+ */
 public class TConsumer extends Thread{
     
     Properties prop;
@@ -41,8 +49,8 @@ public class TConsumer extends Thread{
                 }
                 previous_record_time = present_record_time;
                 System.out.println("Number of records:" + record_counter);
-                // System.out.println("Recieved new Record-" + "Key: " + record.key() + ", " + "Value: " + record.value()
-                // +"TConsumer:"+num);
+                System.out.println("Recieved new Record-" + "Key: " + record.key() + ", " + "Value: " + record.value()
+                +"TConsumer:"+num);
             }
         }
     }
