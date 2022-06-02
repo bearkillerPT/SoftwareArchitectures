@@ -11,7 +11,6 @@ public class TServer extends Thread {
 
     public TServer(Socket client_socket) {
         this.client_socket = client_socket;
-
         try {
             this.out = new PrintWriter(client_socket.getOutputStream(), true);
         } catch (IOException e) {
