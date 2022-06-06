@@ -8,14 +8,18 @@ public class PServer {
 
     private final int portNumber = 4445;
     private ServerSocket serverSocket;
-    private Socket[] clients_queue = { null, null };
+    private Socket[] clients_queue = {null, null};
     private TServer[] servers;
+    public int workers_count;
 
     public PServer(int workers_count) {
         try {
             this.serverSocket = new ServerSocket(portNumber);
             this.workers_count = workers_count;
             this.servers = new TServer[workers_count];
+            for (int i = 0; i < workers_count; i++) {
+                this.servers[i] = null;
+            }
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -23,16 +27,47 @@ public class PServer {
 
     /*
      * Process client request.
-     * Returns true if the there is space available in the queue.
+     * Returns false if no space is available.
      */
     public boolean processClient() {
-        if (this.queueFull())
+        if (this.queueFull()) {
             return false;
+        }
+        TServer next_worker = this.getAvailableServer();
+        Socket clientSocket = this.acceptClient();
 
+        if (next_worker != null) {
+            if (clientSocket != null) {
+                next_worker = new TServer(clientSocket);
+                next_worker.start();
+            }
+        } else {
+            if (this.queueEmpty()) {
+                this.clients_queue[0] = clientSocket;
+            } else {
+                this.clients_queue[1] = clientSocket;
+            }
+
+        }
     }
 
-    private boolean allServersBusy() {
-        
+    private Socket acceptClient() {
+        Socket clientSocket = null;
+        try {
+            clientSocket = this.serverSocket.accept();
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        return clientSocket;
+    }
+
+    private TServer getAvailableServer() {
+        for (int i = 0; i < this.workers_count; i++) {
+            if (this.servers[i] == null) {
+                return this.servers[i];
+            }
+        }
+        return null;
     }
 
     private boolean queueEmpty() {

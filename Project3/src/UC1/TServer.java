@@ -8,17 +8,19 @@ public class TServer extends Thread {
 
     private Socket client_socket;
     private PrintWriter out;
-
-
-
-    @Override
-    public void run(Socket client_socket) {
+    public TServer(Socket client_socket) {
         this.client_socket = client_socket;
         try {
             this.out = new PrintWriter(client_socket.getOutputStream(), true);
         } catch (IOException e) {
             System.out.println(e);
         }
+    }
+
+
+    @Override
+    public void run() {
+        
         double result = this.calculatePI();
 
         try {
