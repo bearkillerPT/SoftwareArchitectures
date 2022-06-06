@@ -29,7 +29,7 @@ public class PServer {
      * Process client request.
      * Returns false if no space is available.
      */
-    public boolean processClient() {
+    public boolean processClient(int num_iter) {
         if (this.queueFull()) {
             return false;
         }
@@ -61,6 +61,25 @@ public class PServer {
         return clientSocket;
     }
 
+    
+    /*
+    * Return the space available on the server
+    */
+    public int serverSpace() {
+        if (this.queueFull()) {
+            return 0;
+        }
+        int space = 0;
+        if(this.clients_queue[0] == null) space++;
+        if(this.clients_queue[1] == null) space++;
+        for (int i = 0; i < this.workers_count; i++) {
+            if (this.servers[i] == null) {
+                space++;
+            }
+        }
+        return space;
+    }
+
     private TServer getAvailableServer() {
         for (int i = 0; i < this.workers_count; i++) {
             if (this.servers[i] == null) {
@@ -74,7 +93,7 @@ public class PServer {
         return this.clients_queue[0] == null && this.clients_queue[1] == null;
     }
 
-    private boolean queueFull() {
+    public boolean queueFull() {
         return this.clients_queue[0] != null && this.clients_queue[1] != null;
     }
 
