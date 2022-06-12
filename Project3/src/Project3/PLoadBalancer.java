@@ -22,18 +22,26 @@ public class PLoadBalancer {
 
     public void run() {
         while(true){
+            
+            Message msg = null;
             try {
                 Socket client = this.serverSocket.accept();
                 this.in = new DataInputStream(client.getInputStream());
                 String msg_text = in.readUTF();
-                Message msg = Message.parseMessage(msg_text);
+                msg = Message.parseMessage(msg_text);
                 this.in.close();
                 client.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            if(msg != null){
+                balanceAndSend(msg);
+            }
         }
+    }
+
+    private void balanceAndSend(Message msg) {
+
     }
 
     public static void main(String[] args) {

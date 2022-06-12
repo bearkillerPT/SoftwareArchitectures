@@ -1,6 +1,8 @@
 package Project3;
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -8,9 +10,11 @@ public class PServer {
 
     private final int portNumber = 4445;
     private ServerSocket serverSocket;
-    private Socket[] clients_queue = {null, null};
+    private Socket[] clients_queue = { null, null };
     private TServer[] servers;
     public int workers_count;
+    private PrintWriter out;
+    private DataInputStream in;
 
     public PServer(int workers_count) {
         try {
@@ -29,6 +33,19 @@ public class PServer {
      * Process client request.
      * Returns false if no space is available.
      */
+
+    public void run() {
+        while (true) {
+            Socket client = acceptClient();
+            try {
+                this.in = new DataInputStream(client.getInputStream());
+                String msg_text = in.readUTF();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public boolean processClient(int num_iter) {
         if (this.queueFull()) {
             return false;
@@ -49,6 +66,7 @@ public class PServer {
             }
 
         }
+        return false;
     }
 
     private Socket acceptClient() {
@@ -61,17 +79,18 @@ public class PServer {
         return clientSocket;
     }
 
-    
     /*
-    * Return the space available on the server
-    */
+     * Return the space available on the server
+     */
     public int serverSpace() {
         if (this.queueFull()) {
             return 0;
         }
         int space = 0;
-        if(this.clients_queue[0] == null) space++;
-        if(this.clients_queue[1] == null) space++;
+        if (this.clients_queue[0] == null)
+            space++;
+        if (this.clients_queue[1] == null)
+            space++;
         for (int i = 0; i < this.workers_count; i++) {
             if (this.servers[i] == null) {
                 space++;

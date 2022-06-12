@@ -1,2 +1,6 @@
 3000 - LB serverSocket - receive requests
 3001 - LB clientSocket - send requests
+3010-3019 - PServer serverSocket - receive requests (based on server_id)
+3020-3029 - PServer clientsocket - send requests (based on server_id)
+3030-3039 - PClient serverSocket - receive requests (based on client_id)
+3030-3039 - PClient clientsocket - send requests (based on client_id)
