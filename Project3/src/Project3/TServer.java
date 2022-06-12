@@ -5,12 +5,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class TServer extends Thread {
-
+    private Message client_message;
     private Socket client_socket;
     private PrintWriter out;
-    public TServer(Socket client_socket) {
-        this.client_socket = client_socket;
+    public TServer(Message msg) {
+        this.client_message = msg;
         try {
+            this.client_socket = new Socket("127.0.0.1", 3030 + msg.client_id);
             this.out = new PrintWriter(client_socket.getOutputStream(), true);
         } catch (IOException e) {
             System.out.println(e);
@@ -20,9 +21,9 @@ public class TServer extends Thread {
 
     @Override
     public void run() {
-        
-        double result = this.calculatePI();
-
+        for(int i = 0; i < this.client_message.number_iteractions; i++)
+            this.calculatePI();
+        double result = Math.round(Math.PI * Math.pow(10, this.client_message.number_iteractions))/ Math.pow(10, this.client_message.number_iteractions);
         try {
             this.out.print(result);
             this.out.flush();
@@ -34,6 +35,11 @@ public class TServer extends Thread {
     }
 
     private double calculatePI() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return Math.PI;
     }
 }

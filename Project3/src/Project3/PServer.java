@@ -1,8 +1,8 @@
 package Project3;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -10,10 +10,10 @@ public class PServer {
 
     private final int portNumber = 4445;
     private ServerSocket serverSocket;
-    private Socket[] clients_queue = { null, null };
+    private Message[] msg_queue = { null, null };
     private TServer[] servers;
     public int workers_count;
-    private PrintWriter out;
+    private DataOutputStream out;
     private DataInputStream in;
 
     public PServer(int workers_count) {
@@ -29,10 +29,49 @@ public class PServer {
         }
     }
 
+    private void moveQueue() {
+        if (!queueEmpty()) {
+            Message msg_to_send;
+            if (queueFull()) {
+                if (msg_queue[0].compareTo(msg_queue[1]) < 0)
+                    {
+                        msg_to_send = msg_queue[1];
+                        msg_queue[1] = null;
+                    }
+                else
+                    {
+                        msg_to_send = msg_queue[0];
+                        msg_queue[0] = null;
+                    }
+            }
+            else if(msg_queue[0] != null) {
+                msg_to_send = msg_queue[0];
+                msg_queue[0] = null;
+            }
+            else if(msg_queue[1] != null) {
+                msg_to_send = msg_queue[1];
+                msg_queue[1] = null;
+            }
+            else return;
+            TServer avail_server = getAvailableServer();
+            if(avail_server == null) return;
+            processClient(msg_to_send);
+        }
+    }
+
     /*
-     * Process client request.
-     * Returns false if no space is available.
+     * Return the space available on the server
      */
+    private int totalFreeSlots() {
+        int available_spots = 0;
+        for (TServer server : this.servers)
+            if (server != null)
+                available_spots++;
+        for (Message msg : msg_queue)
+            if (msg != null)
+                available_spots++;
+        return available_spots;
+    }
 
     public void run() {
         while (true) {
@@ -40,13 +79,25 @@ public class PServer {
             try {
                 this.in = new DataInputStream(client.getInputStream());
                 String msg_text = in.readUTF();
+                if(msg_text.equals("getAvailability")){
+                    this.out = new DataOutputStream(client.getOutputStream());
+                    this.out.write(this.totalFreeSlots());
+                }else{
+                    this.moveQueue();
+                    this.processClient(Message.parseMessage(msg_text));
+                }
+                    
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public boolean processClient(int num_iter) {
+    /*
+     * Process client request.
+     * Returns false if no space is available.
+     */
+    public boolean processClient(Message msg) {
         if (this.queueFull()) {
             return false;
         }
@@ -55,14 +106,14 @@ public class PServer {
 
         if (next_worker != null) {
             if (clientSocket != null) {
-                next_worker = new TServer(clientSocket);
+                next_worker = new TServer(msg);
                 next_worker.start();
             }
         } else {
             if (this.queueEmpty()) {
-                this.clients_queue[0] = clientSocket;
+                this.msg_queue[0] = msg;
             } else {
-                this.clients_queue[1] = clientSocket;
+                this.msg_queue[1] = msg;
             }
 
         }
@@ -79,28 +130,13 @@ public class PServer {
         return clientSocket;
     }
 
-    /*
-     * Return the space available on the server
-     */
-    public int serverSpace() {
-        if (this.queueFull()) {
-            return 0;
-        }
-        int space = 0;
-        if (this.clients_queue[0] == null)
-            space++;
-        if (this.clients_queue[1] == null)
-            space++;
-        for (int i = 0; i < this.workers_count; i++) {
-            if (this.servers[i] == null) {
-                space++;
-            }
-        }
-        return space;
-    }
-
     private TServer getAvailableServer() {
         for (int i = 0; i < this.workers_count; i++) {
+            try {
+                this.servers[i].join(10);
+                this.servers[i] = null;
+            } catch (InterruptedException e) {
+            }
             if (this.servers[i] == null) {
                 return this.servers[i];
             }
@@ -109,11 +145,11 @@ public class PServer {
     }
 
     private boolean queueEmpty() {
-        return this.clients_queue[0] == null && this.clients_queue[1] == null;
+        return this.msg_queue[0] == null && this.msg_queue[1] == null;
     }
 
     public boolean queueFull() {
-        return this.clients_queue[0] != null && this.clients_queue[1] != null;
+        return this.msg_queue[0] != null && this.msg_queue[1] != null;
     }
 
     public void main(String[] args) {

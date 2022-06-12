@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author gil-t
  */
-public class Message {
+public class Message implements Comparable<Message>{
 
     public int client_id;
     public int request_id;
@@ -66,5 +66,10 @@ public class Message {
         Message res = Message.parseMessage(" | 1 | 1 | 00 | 01 | 10 | 00 | 20 |");
         if (res != null)
             System.out.println(res.toString());
+    }
+
+    @Override
+    public int compareTo(Message other_msg) {
+        return this.deadline - other_msg.deadline;
     }
 }

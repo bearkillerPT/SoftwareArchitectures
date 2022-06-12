@@ -16,7 +16,7 @@ public class PCliente extends Thread{
         this.client_id = 1;
         this.number_of_iterations = 1;
         try {
-            client_socket = new Socket("127.0.0.1", 3000);
+            client_socket = new Socket("127.0.0.1", 3030 + client_id);
             this.out = new DataOutputStream(client_socket.getOutputStream());
         } catch (IOException e) {
             System.out.println(e);
