@@ -23,16 +23,20 @@ public class PCliente extends Thread {
         this.number_of_iterations = 1;
         try {
             this.serverSocketChannel = ServerSocketChannel.open();
-            client_socket = new Socket("127.0.0.1", 3000);
             serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", 3040 + this.client_id));
             serverSocketChannel.configureBlocking(false);
-            this.out = new DataOutputStream(client_socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void sendRequest() {
+        try {
+            this.client_socket = new Socket("127.0.0.1", 3000);
+            this.out = new DataOutputStream(client_socket.getOutputStream());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
         if (this.client_socket != null) {
             System.out.println("send");
             long request_deadline = new Random().nextLong(200, 1000);
@@ -45,6 +49,8 @@ public class PCliente extends Thread {
             request_msg += request_deadline;
             try {
                 this.out.writeUTF(request_msg);
+                this.out.close();
+                this.client_socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -70,7 +76,7 @@ public class PCliente extends Thread {
 
     public void run() {
         while (true) {
-            //this.getResult();
+            // this.getResult();
             this.sendRequest();
             try {
                 TimeUnit.SECONDS.sleep(1);
@@ -83,6 +89,5 @@ public class PCliente extends Thread {
     public static void main(String[] args) {
         PCliente client = new PCliente();
         client.run();
-
     }
 }
