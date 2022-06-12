@@ -10,12 +10,6 @@ public class TServer extends Thread {
     private PrintWriter out;
     public TServer(Message msg) {
         this.client_message = msg;
-        try {
-            this.client_socket = new Socket("127.0.0.1", 3030 + msg.client_id);
-            this.out = new PrintWriter(client_socket.getOutputStream(), true);
-        } catch (IOException e) {
-            System.out.println(e);
-        }
     }
 
 
@@ -28,6 +22,8 @@ public class TServer extends Thread {
             this.out.print(result);
             this.out.flush();
             this.out.close();
+            this.client_socket = new Socket("127.0.0.1", 3040 + this.client_message.client_id);
+            this.out = new PrintWriter(client_socket.getOutputStream(), true);
             this.client_socket.close();
         } catch (IOException e) {
             System.out.println(e);

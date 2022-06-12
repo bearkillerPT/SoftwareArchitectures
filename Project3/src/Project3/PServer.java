@@ -152,9 +152,11 @@ public class PServer {
         return this.msg_queue[0] != null && this.msg_queue[1] != null;
     }
 
-    public void main(String[] args) {
+
+    public static void main(String[] args) {
         int server_threads = 3;
         PServer server = new PServer(server_threads);
+        server.run();
 
     }
 }

@@ -14,7 +14,6 @@ public class PLoadBalancer {
     public PLoadBalancer() {
         try {
             this.serverSocket = new ServerSocket(3000);
-            //this.client_socket = new Socket("127.0.0.1", 3001);
         } catch (IOException e) {
             e.printStackTrace();
         }
