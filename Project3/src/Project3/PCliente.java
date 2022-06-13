@@ -17,8 +17,10 @@ public class PCliente extends Thread {
     private int client_id;
     private int request_id = 0;
     private int number_of_iterations;
+    private final GUIClient GClient;
 
     public PCliente() {
+        this.GClient = new GUIClient("Client");
         this.client_id = 1;
         this.number_of_iterations = 1;
         try {
@@ -85,8 +87,24 @@ public class PCliente extends Thread {
         }
     }
 
+    synchronized String getVal(){
+        if(this.GClient.data!=null)
+            return this.GClient.data;
+        return null;
+    }
+
     public static void main(String[] args) {
         PCliente client = new PCliente();
+
+        String text = null;
+        String requests;
+        String deadline;
+        while((text = client.getVal())==null){
+        }
+        requests = text.split(":")[0];
+        deadline = text.split(":")[1];
+        System.out.println("Requests: "+requests+"\nDeadline: "+deadline);
+
         client.run();
     }
 }
