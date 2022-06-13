@@ -14,6 +14,10 @@ import javax.swing.JTextField;
 public class GUIClient extends JFrame implements ActionListener {
 
     JPanel insertRequestsPanel = new JPanel();
+    
+    JLabel insertIdClientLabel = new JLabel("Insert Client");
+    JTextField insertIdClientTextField = new JTextField();
+    
     JLabel insertRequestsLabel = new JLabel("Insert requests");
     JTextField insertRequestsTextField = new JTextField();
     JLabel insertDeadLineLabel = new JLabel("Insert deadline");
@@ -30,12 +34,15 @@ public class GUIClient extends JFrame implements ActionListener {
     public String data = null;
 
     public GUIClient(String title) {
+        this.insertIdClientTextField.setColumns(5);
         this.insertRequestsTextField.setColumns(5);
         this.insertDeadLineTextField.setColumns(5);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle(title + " GUI");
         this.setLayout(new GridLayout(3, 0));
         this.insertRequestsbutton.setText("Send");
+        this.insertRequestsPanel.add(this.insertIdClientLabel);
+        this.insertRequestsPanel.add(this.insertIdClientTextField);
         this.insertRequestsPanel.add(this.insertRequestsLabel);
         this.insertRequestsPanel.add(this.insertRequestsTextField);
         this.insertRequestsPanel.add(this.insertDeadLineLabel);
