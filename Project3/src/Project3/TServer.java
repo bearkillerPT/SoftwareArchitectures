@@ -28,6 +28,8 @@ public class TServer extends Thread {
         } catch (IOException e) {
             System.out.println(e);
         }
+        System.out.println("Server done working!");
+
     }
 
     private double calculatePI() {

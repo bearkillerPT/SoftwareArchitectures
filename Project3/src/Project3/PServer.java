@@ -101,6 +101,7 @@ public class PServer {
             return false;
         }
         int next_worker_i = this.getAvailableServer();
+        System.out.println("Server_" + next_worker_i + " is working!");
 
         if (this.servers[next_worker_i] != null) {
             this.servers[next_worker_i] = new TServer(msg);
