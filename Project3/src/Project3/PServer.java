@@ -8,7 +8,6 @@ import java.net.Socket;
 
 public class PServer {
 
-    private final int portNumber = 4445;
     private ServerSocket serverSocket;
     private Message[] msg_queue = { null, null };
     private TServer[] servers;
@@ -18,7 +17,7 @@ public class PServer {
 
     public PServer(int workers_count) {
         try {
-            this.serverSocket = new ServerSocket(portNumber);
+            this.serverSocket = new ServerSocket(3010);
             this.workers_count = workers_count;
             this.servers = new TServer[workers_count];
             for (int i = 0; i < workers_count; i++) {
@@ -65,10 +64,10 @@ public class PServer {
     private int totalFreeSlots() {
         int available_spots = 0;
         for (TServer server : this.servers)
-            if (server != null)
+            if (server == null)
                 available_spots++;
         for (Message msg : msg_queue)
-            if (msg != null)
+            if (msg == null)
                 available_spots++;
         return available_spots;
     }
@@ -81,8 +80,9 @@ public class PServer {
                 String msg_text = in.readUTF();
                 if(msg_text.equals("getAvailability")){
                     this.out = new DataOutputStream(client.getOutputStream());
-                    this.out.write(this.totalFreeSlots());
+                    this.out.writeUTF("" + this.totalFreeSlots());
                 }else{
+                    System.out.println("Processing request!");
                     this.moveQueue();
                     this.processClient(Message.parseMessage(msg_text));
                 }
@@ -132,13 +132,13 @@ public class PServer {
 
     private TServer getAvailableServer() {
         for (int i = 0; i < this.workers_count; i++) {
+            if (this.servers[i] == null) {
+                return this.servers[i];
+            }
             try {
                 this.servers[i].join(10);
                 this.servers[i] = null;
             } catch (InterruptedException e) {
-            }
-            if (this.servers[i] == null) {
-                return this.servers[i];
             }
         }
         return null;

@@ -23,7 +23,7 @@ public class PCliente extends Thread {
         this.number_of_iterations = 1;
         try {
             this.serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", 3040 + this.client_id));
+            serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", 3020 + this.client_id));
             serverSocketChannel.configureBlocking(false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,10 +76,9 @@ public class PCliente extends Thread {
 
     public void run() {
         while (true) {
-            // this.getResult();
             this.sendRequest();
             try {
-                TimeUnit.SECONDS.sleep(1);
+                TimeUnit.SECONDS.sleep(5);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

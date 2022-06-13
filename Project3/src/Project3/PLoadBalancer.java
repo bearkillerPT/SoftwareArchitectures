@@ -1,16 +1,19 @@
 package Project3;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class PLoadBalancer {
     private ServerSocket serverSocket;
     private Socket client_socket;
     private PrintWriter out;
     private DataInputStream in;
+
     public PLoadBalancer() {
         try {
             this.serverSocket = new ServerSocket(3000);
@@ -20,27 +23,70 @@ public class PLoadBalancer {
     }
 
     public void run() {
-        while(true){
-            
+        while (true) {
+
             Message msg = null;
             try {
                 Socket client = this.serverSocket.accept();
                 this.in = new DataInputStream(client.getInputStream());
                 String msg_text = in.readUTF();
                 msg = Message.parseMessage(msg_text);
+                System.out.println(msg.toString());
                 this.in.close();
                 client.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-            if(msg != null){
-                balanceAndSend(msg);
+            } finally {
+                if (msg != null) {
+                    balanceAndSend(msg);
+                }
             }
         }
     }
 
+    // Returns the port of the choosen server
+    private int chooseServer() {
+        int[] available_spots = new int[10];
+        for (int i = 0; i < 10; i++)
+            available_spots[i] = -1;
+        for (int port = 3010; port < 3020; port++) {
+            try {
+                Socket server_con = new Socket("127.0.0.1", port);
+                DataOutputStream server_out = new DataOutputStream(server_con.getOutputStream());
+                DataInputStream server_in = new DataInputStream(server_con.getInputStream());
+                server_out.writeUTF("getAvailability");
+                available_spots[port - 3010] = Integer.parseInt(server_in.readUTF());
+
+            } catch (Exception e) {
+                //Printing the exception here makes no sense as this is a test to all possible 10 servers
+                //e.printStackTrace();
+            }
+        }
+        int max_spots = -1;
+        int max_spots_i = -1;
+        for (int i = 0; i < 10; i++) {
+            System.out.println("server_" + i + " -> " + available_spots[i]);
+            if (available_spots[i] > max_spots){
+                max_spots = available_spots[i];
+                max_spots_i = i;
+            }
+        }
+            
+        if(max_spots_i == -1)
+            return 3010;
+        return 3010 + max_spots_i;
+    }
+
     private void balanceAndSend(Message msg) {
-        
+        int server_port = chooseServer();
+        try {
+            Socket server_conn = new Socket("127.0.0.1", server_port);
+            DataOutputStream server_out = new DataOutputStream(server_conn.getOutputStream());
+            server_out.writeUTF(msg.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+        System.out.println(msg.toString());
     }
 
     public static void main(String[] args) {
