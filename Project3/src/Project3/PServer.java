@@ -32,28 +32,24 @@ public class PServer {
         if (!queueEmpty()) {
             Message msg_to_send;
             if (queueFull()) {
-                if (msg_queue[0].compareTo(msg_queue[1]) < 0)
-                    {
-                        msg_to_send = msg_queue[1];
-                        msg_queue[1] = null;
-                    }
-                else
-                    {
-                        msg_to_send = msg_queue[0];
-                        msg_queue[0] = null;
-                    }
-            }
-            else if(msg_queue[0] != null) {
+                if (msg_queue[0].compareTo(msg_queue[1]) < 0) {
+                    msg_to_send = msg_queue[1];
+                    msg_queue[1] = null;
+                } else {
+                    msg_to_send = msg_queue[0];
+                    msg_queue[0] = null;
+                }
+            } else if (msg_queue[0] != null) {
                 msg_to_send = msg_queue[0];
                 msg_queue[0] = null;
-            }
-            else if(msg_queue[1] != null) {
+            } else if (msg_queue[1] != null) {
                 msg_to_send = msg_queue[1];
                 msg_queue[1] = null;
-            }
-            else return;
-            TServer avail_server = getAvailableServer();
-            if(avail_server == null) return;
+            } else
+                return;
+            int avail_server_i = getAvailableServer();
+            if (this.servers[avail_server_i] == null)
+                return;
             processClient(msg_to_send);
         }
     }
@@ -74,19 +70,22 @@ public class PServer {
 
     public void run() {
         while (true) {
-            Socket client = acceptClient();
             try {
+                Socket client = acceptClient();
+                System.out.println("Processing request!");
                 this.in = new DataInputStream(client.getInputStream());
                 String msg_text = in.readUTF();
-                if(msg_text.equals("getAvailability")){
+                if (msg_text.equals("getAvailability")) {
                     this.out = new DataOutputStream(client.getOutputStream());
                     this.out.writeUTF("" + this.totalFreeSlots());
-                }else{
-                    System.out.println("Processing request!");
+                } else {
                     this.moveQueue();
                     this.processClient(Message.parseMessage(msg_text));
                 }
-                    
+                this.in.close();
+                this.out.close();
+                client.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -101,14 +100,11 @@ public class PServer {
         if (this.queueFull()) {
             return false;
         }
-        TServer next_worker = this.getAvailableServer();
-        Socket clientSocket = this.acceptClient();
+        int next_worker_i = this.getAvailableServer();
 
-        if (next_worker != null) {
-            if (clientSocket != null) {
-                next_worker = new TServer(msg);
-                next_worker.start();
-            }
+        if (this.servers[next_worker_i] != null) {
+            this.servers[next_worker_i] = new TServer(msg);
+            this.servers[next_worker_i].start();
         } else {
             if (this.queueEmpty()) {
                 this.msg_queue[0] = msg;
@@ -117,7 +113,7 @@ public class PServer {
             }
 
         }
-        return false;
+        return true;
     }
 
     private Socket acceptClient() {
@@ -130,10 +126,10 @@ public class PServer {
         return clientSocket;
     }
 
-    private TServer getAvailableServer() {
+    private int getAvailableServer() {
         for (int i = 0; i < this.workers_count; i++) {
             if (this.servers[i] == null) {
-                return this.servers[i];
+                return i;
             }
             try {
                 this.servers[i].join(10);
@@ -141,7 +137,7 @@ public class PServer {
             } catch (InterruptedException e) {
             }
         }
-        return null;
+        return -1;
     }
 
     private boolean queueEmpty() {
@@ -151,7 +147,6 @@ public class PServer {
     public boolean queueFull() {
         return this.msg_queue[0] != null && this.msg_queue[1] != null;
     }
-
 
     public static void main(String[] args) {
         int server_threads = 3;

@@ -80,7 +80,7 @@ public class PCliente extends Thread {
         while (true) {
             this.sendRequest();
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -99,11 +99,10 @@ public class PCliente extends Thread {
         String text = null;
         String requests;
         String deadline;
-        while((text = client.getVal())==null){
-        }
-        requests = text.split(":")[0];
-        deadline = text.split(":")[1];
-        System.out.println("Requests: "+requests+"\nDeadline: "+deadline);
+        //while((text = client.getVal())==null);
+        //requests = text.split(":")[0];
+        //deadline = text.split(":")[1];
+        //System.out.println("Requests: "+requests+"\nDeadline: "+deadline);
 
         client.run();
     }

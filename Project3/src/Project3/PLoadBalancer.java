@@ -56,23 +56,27 @@ public class PLoadBalancer {
                 DataInputStream server_in = new DataInputStream(server_con.getInputStream());
                 server_out.writeUTF("getAvailability");
                 available_spots[port - 3010] = Integer.parseInt(server_in.readUTF());
+                server_in.close();
+                server_out.close();
+                server_con.close();
 
             } catch (Exception e) {
-                //Printing the exception here makes no sense as this is a test to all possible 10 servers
-                //e.printStackTrace();
+                // Printing the exception here makes no sense as this is a test to all possible
+                // 10 servers
+                // e.printStackTrace();
             }
         }
         int max_spots = -1;
         int max_spots_i = -1;
         for (int i = 0; i < 10; i++) {
             System.out.println("server_" + i + " -> " + available_spots[i]);
-            if (available_spots[i] > max_spots){
+            if (available_spots[i] > max_spots) {
                 max_spots = available_spots[i];
                 max_spots_i = i;
             }
         }
-            
-        if(max_spots_i == -1)
+
+        if (max_spots_i == -1)
             return 3010;
         return 3010 + max_spots_i;
     }
@@ -83,9 +87,11 @@ public class PLoadBalancer {
             Socket server_conn = new Socket("127.0.0.1", server_port);
             DataOutputStream server_out = new DataOutputStream(server_conn.getOutputStream());
             server_out.writeUTF(msg.toString());
+            server_out.close();
+            server_conn.close();
         } catch (Exception e) {
             e.printStackTrace();
-        } 
+        }
         System.out.println(msg.toString());
     }
 
