@@ -7,10 +7,10 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class PCliente extends Thread {
+
     private ServerSocketChannel serverSocketChannel;
     private Socket client_socket;
     private DataOutputStream out;
@@ -32,7 +32,7 @@ public class PCliente extends Thread {
         }
     }
 
-    public void sendRequest() {
+    public void sendRequest(String idClient, String DeadLine) {
         try {
             this.client_socket = new Socket("127.0.0.1", 3000);
             this.out = new DataOutputStream(client_socket.getOutputStream());
@@ -41,14 +41,13 @@ public class PCliente extends Thread {
         }
         if (this.client_socket != null) {
             System.out.println("send");
-            long request_deadline = new Random().nextLong(200, 1000);
-            String request_msg = client_id + "|";
+            String request_msg = idClient + "|";
             request_msg += request_id + "|";
             request_msg += "00" + "|";
             request_msg += "01" + "|";
             request_msg += this.number_of_iterations + "|";
             request_msg += "00" + "|";
-            request_msg += request_deadline;
+            request_msg += DeadLine;
             try {
                 this.out.writeUTF(request_msg);
                 this.out.close();
@@ -64,8 +63,9 @@ public class PCliente extends Thread {
         SocketChannel socketChannel = null;
         try {
             socketChannel = serverSocketChannel.accept();
-            if (socketChannel == null)
+            if (socketChannel == null) {
                 return -1;
+            }
             ByteBuffer buffer = ByteBuffer.allocate(1024);
 
             socketChannel.read(buffer);
@@ -79,33 +79,41 @@ public class PCliente extends Thread {
 
     public void run() {
         while (true) {
-            this.sendRequest();
+            String text = null;
+            String requests;
+            String deadline;
+            String idClient;
+            while ((text = this.getVal()) != null) {
+                idClient = text.split(":")[0];
+                requests = text.split(":")[1];
+                deadline = text.split(":")[2];
+                System.out.println("Id Client: " + idClient + "\nRequests: " + requests + "\nDeadline: " + deadline);
+                for (int i = 0; i < Integer.parseInt(requests); i++) {
+                    this.sendRequest(idClient, deadline);
+                    this.getResult();
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
             this.getResult();
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
     }
 
-    synchronized String getVal(){
-        if(this.GClient.data!=null)
-            return this.GClient.data;
-        return null;
+    synchronized String getVal() {
+            return this.GClient.getData();
     }
 
     public static void main(String[] args) {
         PCliente client = new PCliente();
-
-        String text = null;
-        String requests;
-        String deadline;
-        //while((text = client.getVal())==null);
-        //requests = text.split(":")[0];
-        //deadline = text.split(":")[1];
-        //System.out.println("Requests: "+requests+"\nDeadline: "+deadline);
-
         client.run();
     }
 }
