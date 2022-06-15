@@ -67,6 +67,7 @@ public class PCliente extends Thread {
             if (socketChannel == null)
                 return -1;
             ByteBuffer buffer = ByteBuffer.allocate(1024);
+
             socketChannel.read(buffer);
             String data = new String(buffer.array()).trim();
             return Double.parseDouble(data);
@@ -79,6 +80,7 @@ public class PCliente extends Thread {
     public void run() {
         while (true) {
             this.sendRequest();
+            this.getResult();
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {

@@ -48,7 +48,7 @@ public class PServer {
             } else
                 return;
             int avail_server_i = getAvailableServer();
-            if (this.servers[avail_server_i] == null)
+            if (avail_server_i == -1)
                 return;
             processClient(msg_to_send);
         }
@@ -70,6 +70,7 @@ public class PServer {
 
     public void run() {
         while (true) {
+            this.clearThreads();
             try {
                 Socket client = acceptClient();
                 System.out.println("Processing request!");
@@ -101,9 +102,9 @@ public class PServer {
             return false;
         }
         int next_worker_i = this.getAvailableServer();
-        System.out.println("Server_" + next_worker_i + " is working!");
 
-        if (this.servers[next_worker_i] != null) {
+        if (next_worker_i != -1) {
+            System.out.println("Server_" + next_worker_i + " is working!");
             this.servers[next_worker_i] = new TServer(msg);
             this.servers[next_worker_i].start();
         } else {
@@ -127,15 +128,17 @@ public class PServer {
         return clientSocket;
     }
 
+    private void clearThreads() {
+        for (int i = 0; i < this.workers_count; i++)
+            if (this.servers[i] != null && !this.servers[i].isAlive()) {
+                this.servers[i] = null;
+            }
+    }
+
     private int getAvailableServer() {
         for (int i = 0; i < this.workers_count; i++) {
             if (this.servers[i] == null) {
                 return i;
-            }
-            try {
-                this.servers[i].join(10);
-                this.servers[i] = null;
-            } catch (InterruptedException e) {
             }
         }
         return -1;
