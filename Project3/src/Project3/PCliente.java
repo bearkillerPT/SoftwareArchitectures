@@ -70,6 +70,7 @@ public class PCliente extends Thread {
 
             socketChannel.read(buffer);
             String data = new String(buffer.array()).trim();
+            System.out.println("Data recieved from server: " + data);
             return Double.parseDouble(data);
         } catch (IOException e) {
             e.printStackTrace();
