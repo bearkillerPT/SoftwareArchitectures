@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class PCliente extends Thread {
@@ -18,6 +20,8 @@ public class PCliente extends Thread {
     private int request_id = 0;
     private int number_of_iterations;
     private final GUIClient GClient;
+    private int pending_requests;
+    Map<String, Object> map = new HashMap<String, Object>();
 
     public PCliente() {
         this.GClient = new GUIClient("Client");
@@ -70,8 +74,10 @@ public class PCliente extends Thread {
 
             socketChannel.read(buffer);
             String data = new String(buffer.array()).trim();
-            System.out.println("Data recieved from server: " + data);
-            return Double.parseDouble(data);
+            setExecutedRequests("Client Id: " + String.valueOf(client_id) + " - Request Id:" + String.valueOf(data.split(":")[1])+" - Result: " + String.valueOf(data.split(":")[0]) +"\n");
+            map.remove(String.valueOf(data.split(":")[1]));
+            setPendingRequests(map);
+            return Double.parseDouble(data.split(":")[0]);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,8 +94,9 @@ public class PCliente extends Thread {
                 idClient = text.split(":")[0];
                 requests = text.split(":")[1];
                 deadline = text.split(":")[2];
-                System.out.println("Id Client: " + idClient + "\nRequests: " + requests + "\nDeadline: " + deadline);
                 for (int i = 0; i < Integer.parseInt(requests); i++) {
+                    map.put(String.valueOf(request_id), idClient + ":" + deadline);
+                    setPendingRequests(map);
                     this.sendRequest(idClient, deadline);
                     this.getResult();
                     try {
@@ -110,7 +117,21 @@ public class PCliente extends Thread {
     }
 
     synchronized String getVal() {
-            return this.GClient.getData();
+        return this.GClient.getData();
+    }
+
+    synchronized void setPendingRequests(Map my_dict) {
+        String pending_requests="";
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = entry.getKey();
+            String value = String.valueOf(entry.getValue());
+            pending_requests += "Id client: " +value.split(":")[0] + " - Request Id: "+ key + "- Id deadline: "+value.split(":")[1]+"\n";
+        }
+        GClient.setPendingRequests(pending_requests);
+    }
+
+    synchronized void setExecutedRequests(String request) {
+        GClient.setExecutedRequests(request);
     }
 
     public static void main(String[] args) {

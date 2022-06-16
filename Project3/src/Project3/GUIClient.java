@@ -4,7 +4,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,7 +29,7 @@ public class GUIClient extends JFrame implements ActionListener {
     JPanel executedRequestsPanel = new JPanel();
     JLabel executedRequestsLabel = new JLabel("Executed requests");
     JTextArea executedRequestsTextArea = new JTextArea(5, 50);
-    public String data;
+    private String data;
     Boolean data_sent = false;
     
     public GUIClient(String title) {
@@ -95,5 +94,13 @@ public class GUIClient extends JFrame implements ActionListener {
             return data;
         }
         return null;
-    }  
+    }
+    
+    public void setPendingRequests(String request){
+        pendingRequestsTextArea.setText(request);
+    }
+    
+    public void setExecutedRequests(String request){
+        executedRequestsTextArea.append(request);
+    }
 }
