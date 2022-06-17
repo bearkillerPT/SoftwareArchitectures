@@ -1,6 +1,11 @@
 package Project3;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -21,9 +26,9 @@ public class PCliente extends Thread {
     private final GUIClient GClient;
     Map<String, Object> map = new HashMap<String, Object>();
 
-    public PCliente() {
+    public PCliente(int client_id) {
+        this.client_id = client_id;
         this.GClient = new GUIClient("Client");
-        this.client_id = 1;
         try {
             this.serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", 3020 + this.client_id));
@@ -33,7 +38,7 @@ public class PCliente extends Thread {
         }
     }
 
-    public void sendRequest(String idClient, String DeadLine, String n_iterations) {
+    public void sendRequest(String DeadLine, String n_iterations) {
         try {
             this.client_socket = new Socket("127.0.0.1", 3000);
             this.out = new DataOutputStream(client_socket.getOutputStream());
@@ -42,7 +47,7 @@ public class PCliente extends Thread {
         }
         if (this.client_socket != null) {
             System.out.println("send");
-            String request_msg = idClient + "|";
+            String request_msg = this.client_id + "|";
             request_msg += request_id + "|";
             request_msg += "00" + "|";
             request_msg += n_iterations + "|";
@@ -86,14 +91,12 @@ public class PCliente extends Thread {
             String text = null;
             String n_iterations;
             String deadline;
-            String idClient;
             while ((text = this.getVal()) != null) {
-                idClient = text.split(":")[0];
-                n_iterations = text.split(":")[1];
-                deadline = text.split(":")[2];
-                map.put(String.valueOf(request_id), idClient + ":"+ deadline+ ":" +n_iterations);
+                n_iterations = text.split(":")[0];
+                deadline = text.split(":")[1];
+                map.put(String.valueOf(request_id), deadline + ":" + n_iterations);
                 setPendingRequests(map);
-                this.sendRequest(idClient, deadline, n_iterations);
+                this.sendRequest(deadline, n_iterations);
                 this.getResult();
                 try {
                     TimeUnit.SECONDS.sleep(1);
@@ -120,7 +123,7 @@ public class PCliente extends Thread {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = entry.getKey();
             String value = String.valueOf(entry.getValue());
-            pending_requests += "Id client: " + value.split(":")[0] + " - Request Id: " + key + " - Id deadline: " + value.split(":")[1] + " - NI: " + value.split(":")[2] + "\n";
+            pending_requests += "Id client: " + String.valueOf(client_id)+ " - Request Id: " + key + " - Id deadline: " + value.split(":")[0] + " - NI: " + value.split(":")[1] + "\n";
         }
         GClient.setPendingRequests(pending_requests);
     }
@@ -129,8 +132,30 @@ public class PCliente extends Thread {
         GClient.setExecutedRequests(request);
     }
 
-    public static void main(String[] args) {
-        PCliente client = new PCliente();
+    public static void main(String[] args) throws FileNotFoundException, IOException {
+        Integer clientId = 1;
+        String file_name = "Project3/src/Project3/info.txt";
+        int line_counter = 0;
+        String Content = "";
+
+        BufferedReader br = new BufferedReader(new FileReader(file_name));
+        String line = null;
+        
+        while ((line = br.readLine()) != null) {
+            if (line_counter == 0) {
+                clientId = Integer.valueOf(line.split(":")[1]);
+                Content = Content + (line.split(":")[0] + ":" + String.valueOf(clientId + 1)) + System.lineSeparator();
+            } else {
+                Content = Content + line + System.lineSeparator();
+            }
+            line_counter++;
+        }
+        
+        FileWriter writer = new FileWriter(file_name);
+        writer.write(Content);
+        br.close();
+        writer.close();
+        PCliente client = new PCliente(clientId);
         client.run();
     }
 }

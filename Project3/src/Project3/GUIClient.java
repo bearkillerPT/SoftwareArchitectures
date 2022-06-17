@@ -13,8 +13,6 @@ import javax.swing.JTextField;
 public class GUIClient extends JFrame implements ActionListener {
 
     JPanel pickClientPanel = new JPanel();
-    JLabel pickClientLabel = new JLabel("Insert Client Id");
-    JTextField insertIdClientTextField = new JTextField();
 
     JLabel insertNILabel = new JLabel("Insert nº iterations");
     JTextField insertNITextField = new JTextField();
@@ -33,15 +31,12 @@ public class GUIClient extends JFrame implements ActionListener {
     Boolean data_sent = false;
     
     public GUIClient(String title) {
-        this.insertIdClientTextField.setColumns(5);
         this.insertNITextField.setColumns(5);
         this.insertDeadLineTextField.setColumns(5);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle(title + " GUI");
         this.setLayout(new GridLayout(3, 0));
         this.insertRequestsbutton.setText("Send");
-        this.pickClientPanel.add(this.pickClientLabel);
-        this.pickClientPanel.add(this.insertIdClientTextField);
         this.getContentPane().add(this.pickClientPanel);
         this.pickClientPanel.add(this.insertNILabel);
         this.pickClientPanel.add(this.insertNITextField);
@@ -62,15 +57,13 @@ public class GUIClient extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String ClientId = insertIdClientTextField.getText();
         String N_requests = insertNITextField.getText();
         String deadline = insertDeadLineTextField.getText();
         data = null;
         if ((!insertDeadLineTextField.getText().isEmpty()) && (!insertNITextField.getText().isEmpty())) {
-            if (Integer.parseInt(ClientId) > 0) {
                 if (Integer.parseInt(N_requests) > 0) {
                     if (Integer.parseInt(deadline) > 0) {
-                        data = ClientId + ":" + N_requests + ":" + deadline;
+                        data = N_requests + ":" + deadline;
                         data_sent = true;
                     } else {
                         System.out.println("Value of Deadline must be higher than 0");
@@ -78,9 +71,6 @@ public class GUIClient extends JFrame implements ActionListener {
                 } else {
                     System.out.println("Number of requests must be higher than 0");
                 }
-            } else {
-                System.out.println("Value of Client Id must be higher than 0");
-            }
         } else {
             System.out.println("No field can be empty!");
         }

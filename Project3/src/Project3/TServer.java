@@ -21,7 +21,7 @@ public class TServer extends Thread {
         try {
             this.client_socket = new Socket("127.0.0.1", 3020 + this.client_message.client_id);
             this.out = new PrintWriter(client_socket.getOutputStream(), true);
-            this.out.print(result);
+            this.out.print(result+":"+String.valueOf(client_message.request_id));
             this.out.close();
             this.client_socket.close();
         } catch (IOException e) {
