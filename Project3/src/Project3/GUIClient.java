@@ -71,9 +71,6 @@ public class GUIClient extends JFrame implements ActionListener {
                 if (Integer.parseInt(N_requests) > 0) {
                     if (Integer.parseInt(deadline) > 0) {
                         data = ClientId + ":" + N_requests + ":" + deadline;
-                        insertIdClientTextField.setText("");
-                        insertRequestsTextField.setText("");
-                        insertDeadLineTextField.setText("");
                         data_sent = true;
                     } else {
                         System.out.println("Value of Deadline must be higher than 0");

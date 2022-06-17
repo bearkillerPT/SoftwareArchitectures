@@ -20,7 +20,6 @@ public class PCliente extends Thread {
     private int request_id = 0;
     private int number_of_iterations;
     private final GUIClient GClient;
-    private int pending_requests;
     Map<String, Object> map = new HashMap<String, Object>();
 
     public PCliente() {
