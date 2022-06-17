@@ -17,7 +17,7 @@ public class TServer extends Thread {
     public void run() {
         for(int i = 0; i < this.client_message.number_iteractions; i++)
             this.calculatePI();
-        double result = Math.round(Math.PI * Math.pow(10, this.client_message.number_iteractions))/ Math.pow(10, this.client_message.number_iteractions);
+        double result = Math.floor(Math.PI * Math.pow(10, this.client_message.number_iteractions))/ Math.pow(10, this.client_message.number_iteractions);
         try {
             this.client_socket = new Socket("127.0.0.1", 3020 + this.client_message.client_id);
             this.out = new PrintWriter(client_socket.getOutputStream(), true);

@@ -16,8 +16,8 @@ public class GUIClient extends JFrame implements ActionListener {
     JLabel pickClientLabel = new JLabel("Insert Client Id");
     JTextField insertIdClientTextField = new JTextField();
 
-    JLabel insertRequestsLabel = new JLabel("Insert nº requests");
-    JTextField insertRequestsTextField = new JTextField();
+    JLabel insertNILabel = new JLabel("Insert nº iterations");
+    JTextField insertNITextField = new JTextField();
     JLabel insertDeadLineLabel = new JLabel("Insert deadline");
     JTextField insertDeadLineTextField = new JTextField();
     JButton insertRequestsbutton = new JButton();
@@ -34,7 +34,7 @@ public class GUIClient extends JFrame implements ActionListener {
     
     public GUIClient(String title) {
         this.insertIdClientTextField.setColumns(5);
-        this.insertRequestsTextField.setColumns(5);
+        this.insertNITextField.setColumns(5);
         this.insertDeadLineTextField.setColumns(5);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle(title + " GUI");
@@ -43,8 +43,8 @@ public class GUIClient extends JFrame implements ActionListener {
         this.pickClientPanel.add(this.pickClientLabel);
         this.pickClientPanel.add(this.insertIdClientTextField);
         this.getContentPane().add(this.pickClientPanel);
-        this.pickClientPanel.add(this.insertRequestsLabel);
-        this.pickClientPanel.add(this.insertRequestsTextField);
+        this.pickClientPanel.add(this.insertNILabel);
+        this.pickClientPanel.add(this.insertNITextField);
         this.pickClientPanel.add(this.insertDeadLineLabel);
         this.pickClientPanel.add(this.insertDeadLineTextField);
         this.pickClientPanel.add(this.insertRequestsbutton);
@@ -63,10 +63,10 @@ public class GUIClient extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String ClientId = insertIdClientTextField.getText();
-        String N_requests = insertRequestsTextField.getText();
+        String N_requests = insertNITextField.getText();
         String deadline = insertDeadLineTextField.getText();
         data = null;
-        if ((!insertDeadLineTextField.getText().isEmpty()) && (!insertRequestsTextField.getText().isEmpty())) {
+        if ((!insertDeadLineTextField.getText().isEmpty()) && (!insertNITextField.getText().isEmpty())) {
             if (Integer.parseInt(ClientId) > 0) {
                 if (Integer.parseInt(N_requests) > 0) {
                     if (Integer.parseInt(deadline) > 0) {
