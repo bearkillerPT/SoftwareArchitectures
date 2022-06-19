@@ -11,12 +11,14 @@ import java.net.UnknownHostException;
 public class PLoadBalancer {
     private ServerSocket serverSocket;
     private Socket client_socket;
+    private Socket monitor_socket;
     private PrintWriter out;
     private DataInputStream in;
 
     public PLoadBalancer() {
         try {
             this.serverSocket = new ServerSocket(3000);
+            this.monitor_socket = new Socket("127.0.0.1", 3030);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,6 +91,9 @@ public class PLoadBalancer {
             server_out.writeUTF(msg.toString());
             server_out.close();
             server_conn.close();
+            DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
+            monitor_out.writeUTF("LB: Request handled C" + msg.client_id + " -> S" + (3010-server_port));
+            monitor_out.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
