@@ -14,6 +14,7 @@ public class PServer {
     public int workers_count;
     private DataOutputStream out;
     private DataInputStream in;
+    private Socket monitor_socket;
 
     public PServer(int workers_count) {
         try {
@@ -98,7 +99,22 @@ public class PServer {
      * Returns false if no space is available.
      */
     public boolean processClient(Message msg) {
+        DataOutputStream monitor_out = null;
+        try {
+            this.monitor_socket = new Socket("127.0.0.1", 3030);
+            monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (this.queueFull()) {
+            if (monitor_out != null) {
+                try {
+                    monitor_out.writeUTF("Server is Busy and no space in queue!");
+                    monitor_out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             return false;
         }
         int next_worker_i = this.getAvailableServer();
@@ -107,13 +123,28 @@ public class PServer {
             System.out.println("Server_" + next_worker_i + " is working!");
             this.servers[next_worker_i] = new TServer(msg);
             this.servers[next_worker_i].start();
+            if (monitor_out != null) {
+                try {
+                    monitor_out.writeUTF("Server - sending request to Sthread " + next_worker_i);
+                    monitor_out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         } else {
+            if (monitor_out != null) {
+                try {
+                    monitor_out.writeUTF("Server - Queueing the request!");
+                    monitor_out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             if (this.queueEmpty()) {
                 this.msg_queue[0] = msg;
             } else {
                 this.msg_queue[1] = msg;
             }
-
         }
         return true;
     }
