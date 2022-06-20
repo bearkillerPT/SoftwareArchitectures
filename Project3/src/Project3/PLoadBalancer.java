@@ -85,6 +85,8 @@ public class PLoadBalancer {
         try {
             Socket server_conn = new Socket("127.0.0.1", server_port);
             DataOutputStream server_out = new DataOutputStream(server_conn.getOutputStream());
+            msg.server_id = server_port - 3010;
+            server_out.writeUTF(msg.toString());
             server_out.writeUTF(msg.toString());
             server_out.close();
             server_conn.close();
