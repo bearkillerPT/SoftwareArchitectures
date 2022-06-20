@@ -39,11 +39,21 @@ public class PCliente extends Thread {
     }
 
     public void sendRequest(String DeadLine, String n_iterations) {
+        boolean accepted = false;
         try {
             this.client_socket = new Socket("127.0.0.1", 3000);
             this.out = new DataOutputStream(client_socket.getOutputStream());
         } catch (IOException e1) {
             e1.printStackTrace();
+        }
+        if(!accepted){
+            try {
+            this.client_socket = new Socket("127.0.0.1", 3001);
+            this.out = new DataOutputStream(client_socket.getOutputStream());
+            accepted = true;
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
         }
         if (this.client_socket != null) {
             System.out.println("send");

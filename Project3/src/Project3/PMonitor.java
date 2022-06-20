@@ -7,6 +7,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 public class PMonitor {
     private ServerSocketChannel serverSocketChannel;
@@ -52,7 +55,21 @@ public class PMonitor {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        String file_name = "Project3/info.txt";
+        String Content = "";
+        int set_ids_to_one = 1;
+
+        BufferedReader br = new BufferedReader(new FileReader(file_name));
+        String line = null;
+
+        while ((line = br.readLine()) != null) {
+            Content = Content + (line.split(":")[0] + ":" + String.valueOf(set_ids_to_one)) + System.lineSeparator();
+        }
+        FileWriter writer = new FileWriter(file_name);
+        writer.write(Content);
+        br.close();
+        writer.close();
         PMonitor monitor = new PMonitor();
         monitor.run();
     }
