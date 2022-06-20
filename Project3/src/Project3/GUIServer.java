@@ -31,4 +31,10 @@ public class GUIServer extends JFrame {
         pack();
     }
 
+    public void setPendingRequests(String request) {
+        pendingRequestsTextArea.setText(request);
+    }
+    public void setExecutedRequests(String request){
+        executedRequestsTextArea.append(request);
+    }
 }
