@@ -12,10 +12,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 
 public class PMonitor {
+
     private ServerSocketChannel serverSocketChannel;
     private ArrayList<SocketChannel> components;
+    private GUIMonitor GMonitor;
 
     public PMonitor() {
+        this.GMonitor = new GUIMonitor("Monitor");
         this.components = new ArrayList<SocketChannel>();
         try {
             this.serverSocketChannel = ServerSocketChannel.open();
@@ -30,8 +33,9 @@ public class PMonitor {
         SocketChannel client = null;
         try {
             client = this.serverSocketChannel.accept();
-            if (client != null)
+            if (client != null) {
                 this.components.add(client);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,13 +50,18 @@ public class PMonitor {
                 try {
                     client.read(buffer);
                     String data = new String(buffer.array()).trim();
-                    if ((!data.equals("")))
+                    if ((!data.equals(""))) {
                         System.out.println(data);
+                        setLBRequests(data);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+    synchronized void setLBRequests(String request) {
+        GMonitor.setLBRequests(request);
     }
 
     public static void main(String[] args) throws IOException {
