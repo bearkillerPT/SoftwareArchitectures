@@ -7,14 +7,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PServer {
-
-    private ServerSocket serverSocket;
+    public static Charset charset = Charset.forName("UTF-8");
+    public static CharsetEncoder encoder = charset.newEncoder();
+    public static CharsetDecoder decoder = charset.newDecoder();
+    private ServerSocketChannel serverSocketChannel;
     private Message[] msg_queue = { null, null };
     private TServer[] servers;
     private int id_server;
@@ -26,9 +35,11 @@ public class PServer {
     Map<String, Object> map = new HashMap<String, Object>();
 
     public PServer(int workers_count, int id_server) {
-        this.GServer = new GUIServer("Server "+id_server);
+        this.GServer = new GUIServer("Server " + id_server);
         try {
-            this.serverSocket = new ServerSocket(3010 + id_server);
+            this.serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", 3010 + id_server));
+            serverSocketChannel.configureBlocking(false);
             this.workers_count = workers_count;
             this.id_server = id_server;
             this.servers = new TServer[workers_count];
@@ -81,25 +92,45 @@ public class PServer {
     }
 
     public void run() {
+        long epochTime = System.currentTimeMillis() / 1000; // Seconds EPOCHE
         while (true) {
+            long newEpochTime = System.currentTimeMillis() / 1000; // Seconds EPOCHE
             this.clearThreads();
+            if (newEpochTime - epochTime > 30) {
+                try {
+                    this.monitor_socket = new Socket("127.0.0.1", 3030);
+                    DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
+                    monitor_out.writeUTF("Heartbeat : " + "Server_" + this.id_server);
+                    monitor_out.close();
+                    this.monitor_socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                epochTime = newEpochTime; // Secon
+            }
             try {
-                Socket client = acceptClient();
-                System.out.println("Processing request!");
-                this.in = new DataInputStream(client.getInputStream());
-                String msg_text = in.readUTF();
-                System.out.println(msg_text);
-                if (msg_text.equals("getAvailability")) {
-                    this.out = new DataOutputStream(client.getOutputStream());
-                    this.out.writeUTF("" + this.totalFreeSlots());
+                SocketChannel client = acceptClient();
+                if (client == null)
+                    continue;
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+
+                client.read(buffer);
+                String data = new String(buffer.array()).trim();
+                System.out.println(data);
+                if (data.equals("getAvailability")) {
+                    ByteBuffer res = ByteBuffer.allocate(4);
+                    res.putInt(this.totalFreeSlots());
+                    System.out.println(res.getInt());
+                    client.write(res);
+                    client.close();
                 } else {
                     this.moveQueue();
-                    this.processClient(Message.parseMessage(msg_text), id_server);
-                    map.put(String.valueOf(Message.parseMessage(msg_text).request_id), String.valueOf(Message.parseMessage(msg_text).client_id) + ":" + String.valueOf(Message.parseMessage(msg_text).number_iteractions));
+                    this.processClient(Message.parseMessage(data), id_server);
+                    map.put(String.valueOf(Message.parseMessage(data).request_id),
+                            String.valueOf(Message.parseMessage(data).client_id) + ":"
+                                    + String.valueOf(Message.parseMessage(data).number_iteractions));
                     setPendingRequests(map);
                 }
-                this.in.close();
-                this.out.close();
                 client.close();
 
             } catch (IOException e) {
@@ -113,11 +144,12 @@ public class PServer {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = entry.getKey();
             String value = String.valueOf(entry.getValue());
-            pending_requests += "Id server: " + String.valueOf(id_server)+ " - Request Id: " + key + " - Id client: " + value.split(":")[0] + " - NI: " + value.split(":")[1] + "\n";
+            pending_requests += "Id server: " + String.valueOf(id_server) + " - Request Id: " + key + " - Id client: "
+                    + value.split(":")[0] + " - NI: " + value.split(":")[1] + "\n";
         }
         GServer.setPendingRequests(pending_requests);
     }
-    
+
     /*
      * Process client request.
      * Returns false if no space is available.
@@ -144,7 +176,7 @@ public class PServer {
         int next_worker_i = this.getAvailableServer();
 
         if (next_worker_i != -1) {
-            System.out.println("Server_" + id_server + " T_"+next_worker_i+" is working!");
+            System.out.println("Server_" + id_server + " T_" + next_worker_i + " is working!");
             this.servers[next_worker_i] = new TServer(msg, GServer, map);
             this.servers[next_worker_i].start();
             if (monitor_out != null) {
@@ -173,14 +205,17 @@ public class PServer {
         return true;
     }
 
-    private Socket acceptClient() {
-        Socket clientSocket = null;
+    private SocketChannel acceptClient() {
+        SocketChannel socketChannel = null;
         try {
-            clientSocket = this.serverSocket.accept();
+            socketChannel = serverSocketChannel.accept();
+            if (socketChannel == null) {
+                return null;
+            }
         } catch (IOException e) {
             System.out.println(e);
         }
-        return clientSocket;
+        return socketChannel;
     }
 
     private void clearThreads() {
@@ -216,7 +251,7 @@ public class PServer {
 
         BufferedReader br = new BufferedReader(new FileReader(file_name));
         String line = null;
-        
+
         while ((line = br.readLine()) != null) {
             if (line_counter == 1) {
                 id_server = Integer.valueOf(line.split(":")[1]);
@@ -226,7 +261,7 @@ public class PServer {
             }
             line_counter++;
         }
-        
+
         FileWriter writer = new FileWriter(file_name);
         writer.write(Content);
         br.close();
