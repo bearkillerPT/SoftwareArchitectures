@@ -28,7 +28,7 @@ public class PCliente extends Thread {
 
     public PCliente(int client_id) {
         this.client_id = client_id;
-        this.GClient = new GUIClient("Client");
+        this.GClient = new GUIClient("Client "+ client_id);
         try {
             this.serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.socket().bind(new InetSocketAddress("127.0.0.1", 3020 + this.client_id));
@@ -43,6 +43,7 @@ public class PCliente extends Thread {
         try {
             this.client_socket = new Socket("127.0.0.1", 3000);
             this.out = new DataOutputStream(client_socket.getOutputStream());
+            accepted = true;
         } catch (IOException e1) {
             e1.printStackTrace();
         }

@@ -26,7 +26,7 @@ public class PServer {
     Map<String, Object> map = new HashMap<String, Object>();
 
     public PServer(int workers_count, int id_server) {
-        this.GServer = new GUIServer("Server");
+        this.GServer = new GUIServer("Server "+id_server);
         try {
             this.serverSocket = new ServerSocket(3010 + id_server);
             this.workers_count = workers_count;
