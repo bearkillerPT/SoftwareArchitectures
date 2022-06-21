@@ -10,19 +10,12 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PServer {
-    public static Charset charset = Charset.forName("UTF-8");
-    public static CharsetEncoder encoder = charset.newEncoder();
-    public static CharsetDecoder decoder = charset.newDecoder();
     private ServerSocketChannel serverSocketChannel;
     private Message[] msg_queue = { null, null };
     private TServer[] servers;
@@ -118,10 +111,11 @@ public class PServer {
                 String data = new String(buffer.array()).trim();
                 System.out.println(data);
                 if (data.equals("getAvailability")) {
-                    ByteBuffer res = ByteBuffer.allocate(4);
-                    res.putInt(this.totalFreeSlots());
-                    System.out.println(res.getInt());
-                    client.write(res);
+                    buffer.clear();
+                    String res = "" + this.totalFreeSlots();
+                    buffer.put(res.getBytes());
+                    buffer.flip();
+                    client.write(buffer);
                     client.close();
                 } else {
                     this.moveQueue();
@@ -131,7 +125,6 @@ public class PServer {
                                     + String.valueOf(Message.parseMessage(data).number_iteractions));
                     setPendingRequests(map);
                 }
-                client.close();
 
             } catch (IOException e) {
                 e.printStackTrace();

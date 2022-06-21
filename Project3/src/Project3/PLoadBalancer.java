@@ -14,6 +14,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 public class PLoadBalancer {
     private ServerSocketChannel serverSocketChannel;
@@ -86,9 +88,10 @@ public class PLoadBalancer {
                 Socket server_con = new Socket("127.0.0.1", port);
                 DataOutputStream server_out = new DataOutputStream(server_con.getOutputStream());
                 DataInputStream server_in = new DataInputStream(server_con.getInputStream());
+                System.out.println("Here");
                 server_out.writeUTF("getAvailability");
-                available_spots[port - 3010] = Integer.parseInt(server_in.readUTF());
-                System.out.println(available_spots[port - 3010]);
+                String data = new String(server_in.readAllBytes(), StandardCharsets.UTF_8);
+                available_spots[port - 3010] = Integer.parseInt(data);
                 server_in.close();
                 server_out.close();
                 server_con.close();
@@ -96,7 +99,7 @@ public class PLoadBalancer {
             } catch (Exception e) {
                 // Printing the exception here makes no sense as this is a test to all possible
                 // 10 servers
-                // e.printStackTrace();
+                //e.printStackTrace();
             }
         }
         int max_spots = -1;
@@ -121,7 +124,6 @@ public class PLoadBalancer {
                 Socket server_conn = new Socket("127.0.0.1", server_port);
                 DataOutputStream server_out = new DataOutputStream(server_conn.getOutputStream());
                 msg.server_id = server_port - 3010;
-                server_out.writeUTF(msg.toString());
                 server_out.writeUTF(msg.toString());
                 server_out.close();
                 server_conn.close();
