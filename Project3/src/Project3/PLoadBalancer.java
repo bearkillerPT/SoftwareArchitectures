@@ -16,6 +16,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
 
 public class PLoadBalancer {
+
     private ServerSocketChannel serverSocketChannel;
     private Socket monitor_socket;
     private DataInputStream in;
@@ -44,7 +45,7 @@ public class PLoadBalancer {
                 try {
                     this.monitor_socket = new Socket("127.0.0.1", 3030);
                     DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
-                    monitor_out.writeUTF("HB_LB: " + "LB_" + this.lb_id);
+                    monitor_out.writeUTF("HB_LB:" + this.lb_id);
                     monitor_out.close();
                     this.monitor_socket.close();
                 } catch (IOException e) {
@@ -60,7 +61,7 @@ public class PLoadBalancer {
                     continue;
                 }
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
-    
+
                 socketChannel.read(buffer);
                 String data = new String(buffer.array()).trim();
                 msg = Message.parseMessage(data);
@@ -79,8 +80,9 @@ public class PLoadBalancer {
     // Returns the port of the choosen server
     private int chooseServer() {
         int[] available_spots = new int[10];
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++) {
             available_spots[i] = -1;
+        }
         for (int port = 3010; port < 3020; port++) {
             try {
                 Socket server_con = new Socket("127.0.0.1", port);
@@ -112,8 +114,9 @@ public class PLoadBalancer {
             }
         }
 
-        if (max_spots_i == -1)
+        if (max_spots_i == -1) {
             return -1;
+        }
         return 3010 + max_spots_i;
     }
 
@@ -172,7 +175,11 @@ public class PLoadBalancer {
         while ((line = br.readLine()) != null) {
             if (line_counter == 2) {
                 lb_id = Integer.valueOf(line.split(":")[1]);
-                Content = Content + (line.split(":")[0] + ":" + String.valueOf(lb_id + 1)) + System.lineSeparator();
+                if (lb_id == 0) {
+                    Content = Content + (line.split(":")[0] + ":" + String.valueOf(lb_id + 1)) + System.lineSeparator();
+                } else {
+                    Content = Content + (line.split(":")[0] + ":" + String.valueOf(lb_id-1)) + System.lineSeparator();
+                }
             } else {
                 Content = Content + line + System.lineSeparator();
             }

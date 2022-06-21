@@ -93,7 +93,7 @@ public class PServer {
                 try {
                     this.monitor_socket = new Socket("127.0.0.1", 3030);
                     DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
-                    monitor_out.writeUTF("HB_S: " + "Server_" + this.id_server);
+                    monitor_out.writeUTF("HB_S:" + this.id_server);
                     monitor_out.close();
                     this.monitor_socket.close();
                 } catch (IOException e) {

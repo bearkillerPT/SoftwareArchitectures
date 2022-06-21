@@ -76,10 +76,12 @@ public class PMonitor {
     }
 
     synchronized void setServerStatus(String request) {
+        System.out.println("REQUEST-SERVER:"+request);
         GMonitor.setServerStatus(request);
     }
 
     synchronized void setLbStatus(String request) {
+        System.out.println("REQUEST-LB:"+request);
         GMonitor.setLbStatus(request);
     }
     public static void main(String[] args) throws IOException {
