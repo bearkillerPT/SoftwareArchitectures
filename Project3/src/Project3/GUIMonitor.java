@@ -22,19 +22,14 @@ public class GUIMonitor extends JFrame {
     JPanel mainPanel = new JPanel();
     
     JPanel requestsLBPanel = new JPanel();
-    JLabel requestsLBLabel = new JLabel("Requests of the LB");
+    JLabel requestsLBLabel = new JLabel("Requests managed by the LB");
     JPanel requestsLBPanel2 = new JPanel();
     JTextArea requestsLBTextArea = new JTextArea(5, 25);
 
     JPanel pendingRequestsPanel = new JPanel();
     JPanel pendingRequestsPanel2 = new JPanel();
-    JLabel pendingRequestsLabel = new JLabel("  Recieved requests ");
-    JTextArea pendingRequestsTextArea = new JTextArea(5, 25);
-
-    JPanel executedRequestsPanel = new JPanel();
-    JPanel executedRequestsPanel2 = new JPanel();
-    JLabel executedRequestsLabel = new JLabel("Processed requests");
-    JTextArea executedRequestsTextArea = new JTextArea(5, 25);
+    JLabel requestsServerLabel = new JLabel("  Requests managed by servers");
+    JTextArea requestsServerTextArea = new JTextArea(5, 25);
     
     JPanel stateserversPanel = new JPanel();
     JPanel stateserversPanel2 = new JPanel();
@@ -54,8 +49,7 @@ public class GUIMonitor extends JFrame {
         this.mainPanel.setLayout(new BoxLayout(this.mainPanel, BoxLayout.Y_AXIS));
         
         this.requestsLBTextArea.setBorder(border);
-        this.pendingRequestsTextArea.setBorder(border);
-        this.executedRequestsTextArea.setBorder(border);
+        this.requestsServerTextArea.setBorder(border);
         this.stateserversTextArea.setBorder(border);
         this.stateLbsTextArea.setBorder(border);
 //        
@@ -72,11 +66,8 @@ public class GUIMonitor extends JFrame {
         this.requestsLBPanel.add(this.requestsLBLabel);
         this.requestsLBPanel2.add(this.requestsLBTextArea);
         
-        this.pendingRequestsPanel.add(this.pendingRequestsLabel);
-        this.pendingRequestsPanel2.add(this.pendingRequestsTextArea);
-        
-        this.executedRequestsPanel.add(this.executedRequestsLabel);
-        this.executedRequestsPanel2.add(this.executedRequestsTextArea);
+        this.pendingRequestsPanel.add(this.requestsServerLabel);
+        this.pendingRequestsPanel2.add(this.requestsServerTextArea);
         
         this.stateserversPanel.add(this.stateserversLabel);
         this.stateserversPanel2.add(this.stateserversTextArea);
@@ -88,8 +79,6 @@ public class GUIMonitor extends JFrame {
         this.mainPanel.add(this.requestsLBPanel2);
         this.mainPanel.add(this.pendingRequestsPanel);
         this.mainPanel.add(this.pendingRequestsPanel2);
-        this.mainPanel.add(this.executedRequestsPanel);
-        this.mainPanel.add(this.executedRequestsPanel2);
         this.mainPanel.add(this.stateserversPanel);
         this.mainPanel.add(this.stateserversPanel2);
         this.mainPanel.add(this.stateLbsPanel);
@@ -100,5 +89,15 @@ public class GUIMonitor extends JFrame {
     }
     public void setLBRequests(String request){
         requestsLBTextArea.append(" "+request+"\n");
+    }
+    
+    public void setServerStatus(String request){
+        stateserversTextArea.setText(request);
+    }
+    public void setLbStatus(String request){
+        stateLbsTextArea.setText(request);
+    }
+    public void setServerRequests(String request){
+        requestsServerTextArea.setText(request);
     }
 }

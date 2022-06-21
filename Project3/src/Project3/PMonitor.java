@@ -51,8 +51,15 @@ public class PMonitor {
                     client.read(buffer);
                     String data = new String(buffer.array()).trim();
                     if ((!data.equals(""))) {
-                        System.out.println(data);
-                        setLBRequests(data);
+                        if("HB_LB".equals(data.split(":")[0])){
+                           setLbStatus(data.split(":")[1]);
+                        }else if("HB_S".equals(data.split(":")[0])){
+                            setServerStatus(data.split(":")[1]);
+                        }else if("LB".equals(data.split(":")[0])){
+                            setLBRequests(data.split(":")[1]);
+                        }else{
+                            setServerRequests(data.split(":")[1]);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -63,7 +70,18 @@ public class PMonitor {
     synchronized void setLBRequests(String request) {
         GMonitor.setLBRequests(request);
     }
+    
+    synchronized void setServerRequests(String request) {
+        GMonitor.setServerRequests(request);
+    }
 
+    synchronized void setServerStatus(String request) {
+        GMonitor.setServerStatus(request);
+    }
+
+    synchronized void setLbStatus(String request) {
+        GMonitor.setLbStatus(request);
+    }
     public static void main(String[] args) throws IOException {
         String file_name = "Project3/info.txt";
         String Content = "";

@@ -10,12 +10,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
 
 public class PLoadBalancer {
     private ServerSocketChannel serverSocketChannel;
@@ -46,7 +44,7 @@ public class PLoadBalancer {
                 try {
                     this.monitor_socket = new Socket("127.0.0.1", 3030);
                     DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
-                    monitor_out.writeUTF("Heartbeat : " + "LB_" + this.lb_id);
+                    monitor_out.writeUTF("HB_LB: " + "LB_" + this.lb_id);
                     monitor_out.close();
                     this.monitor_socket.close();
                 } catch (IOException e) {
@@ -88,8 +86,10 @@ public class PLoadBalancer {
                 Socket server_con = new Socket("127.0.0.1", port);
                 DataOutputStream server_out = new DataOutputStream(server_con.getOutputStream());
                 DataInputStream server_in = new DataInputStream(server_con.getInputStream());
-                System.out.println("Here");
                 server_out.writeUTF("getAvailability");
+                byte[] b = new byte[4];
+//                int bytes = server_in.read(b);
+//                available_spots[port - 3010] = bytes;
                 String data = new String(server_in.readAllBytes(), StandardCharsets.UTF_8);
                 available_spots[port - 3010] = Integer.parseInt(data);
                 server_in.close();

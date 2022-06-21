@@ -93,7 +93,7 @@ public class PServer {
                 try {
                     this.monitor_socket = new Socket("127.0.0.1", 3030);
                     DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
-                    monitor_out.writeUTF("Heartbeat : " + "Server_" + this.id_server);
+                    monitor_out.writeUTF("HB_S: " + "Server_" + this.id_server);
                     monitor_out.close();
                     this.monitor_socket.close();
                 } catch (IOException e) {
@@ -174,7 +174,7 @@ public class PServer {
             this.servers[next_worker_i].start();
             if (monitor_out != null) {
                 try {
-                    monitor_out.writeUTF("Server - sending request to Sthread " + next_worker_i);
+                    monitor_out.writeUTF("Server:Server "+msg.server_id+" sending request to Sthread " + next_worker_i);
                     monitor_out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
