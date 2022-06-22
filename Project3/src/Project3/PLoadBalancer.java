@@ -132,8 +132,8 @@ public class PLoadBalancer {
                 server_conn.close();
                 this.monitor_socket = new Socket("127.0.0.1", 3030);
                 DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
-                monitor_out.writeUTF("LB: Request handled C" + msg.client_id + " -> S" + (3010 - server_port));
-                setPendingRequests("LB: Request handled C" + msg.client_id + " -> S" + (3010 - server_port) + "\n");
+                monitor_out.writeUTF("LB: LB_"+lb_id+"R_"+msg.request_id+ " handled C" + msg.client_id + " -> S" + (3010 - server_port));
+                setPendingRequests("LB: "+lb_id+"R handled C" + msg.client_id + " -> S" + (3010 - server_port) + "\n");
                 monitor_out.close();
                 this.monitor_socket.close();
             } catch (Exception e) {
@@ -143,7 +143,7 @@ public class PLoadBalancer {
             try {
                 this.monitor_socket = new Socket("127.0.0.1", 3030);
                 DataOutputStream monitor_out = new DataOutputStream(this.monitor_socket.getOutputStream());
-                monitor_out.writeUTF("LB: Request rejected C" + msg.client_id);
+                monitor_out.writeUTF("LB: R_"+msg.request_id+" rejected C" + msg.client_id);
                 setPendingRequests("LB: Request rejected C" + msg.client_id + "\n");
                 this.client_socket = new Socket("127.0.0.1", 3020 + msg.client_id);
                 this.out = new PrintWriter(client_socket.getOutputStream(), true);
@@ -164,7 +164,7 @@ public class PLoadBalancer {
     }
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        String file_name = "Project3/info.txt";
+        String file_name = String file_name = "Project3/info.txt";
         int line_counter = 0;
         String Content = "";
         int lb_id = 0;

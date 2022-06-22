@@ -85,7 +85,7 @@ public class PMonitor {
         GMonitor.setLbStatus(request);
     }
     public static void main(String[] args) throws IOException {
-        String file_name = "Project3/info.txt";
+        String file_name = String file_name = "Project3/info.txt";
         String Content = "";
         int set_ids_to_zero = 0;
         BufferedReader br = new BufferedReader(new FileReader(file_name));

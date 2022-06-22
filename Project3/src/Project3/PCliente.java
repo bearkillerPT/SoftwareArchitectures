@@ -145,7 +145,7 @@ public class PCliente extends Thread {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
         Integer clientId = 1;
-        String file_name = "Project3/info.txt";
+        String file_name = String file_name = "Project3/info.txt";
         int line_counter = 0;
         String Content = "";
 

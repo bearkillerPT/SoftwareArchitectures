@@ -11,7 +11,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 
 public class GUIMonitor extends JFrame {
@@ -22,22 +24,25 @@ public class GUIMonitor extends JFrame {
     JPanel requestsLBPanel = new JPanel();
     JLabel requestsLBLabel = new JLabel("Requests managed by the LB");
     JPanel requestsLBPanel2 = new JPanel();
-    JTextArea requestsLBTextArea = new JTextArea(5, 25);
+    JTextArea requestsLBTextArea = new JTextArea(6, 25);
+    JScrollPane scroll = new JScrollPane(requestsLBTextArea);
 
     JPanel pendingRequestsPanel = new JPanel();
     JPanel pendingRequestsPanel2 = new JPanel();
     JLabel requestsServerLabel = new JLabel("  Requests managed by servers");
-    JTextArea requestsServerTextArea = new JTextArea(5, 25);
+    JTextArea requestsServerTextArea = new JTextArea(6, 25);
+    
+    JScrollPane scroll2 = new JScrollPane(requestsServerTextArea);
 
     JPanel stateserversPanel = new JPanel();
     JPanel stateserversPanel2 = new JPanel();
     JLabel stateserversLabel = new JLabel("State of servers");
-    JTextArea stateserversTextArea = new JTextArea(5, 25);
+    JTextArea stateserversTextArea = new JTextArea(11, 25);
 
     JPanel stateLbsPanel = new JPanel();
     JPanel stateLbsPanel2 = new JPanel();
     JLabel stateLbsLabel = new JLabel("State of lbs");
-    JTextArea stateLbsTextArea = new JTextArea(5, 25);
+    JTextArea stateLbsTextArea = new JTextArea(3, 25);
     Map<Integer, String> map = new HashMap<Integer, String>();
     Map<Integer, String> map2 = new HashMap<Integer, String>();
 
@@ -56,16 +61,18 @@ public class GUIMonitor extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle(title + " GUI");
         this.mainPanel.setLayout(new BoxLayout(this.mainPanel, BoxLayout.Y_AXIS));
+        this.scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        this.scroll2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         this.requestsLBTextArea.setBorder(border);
         this.requestsServerTextArea.setBorder(border);
         this.stateserversTextArea.setBorder(border);
         this.stateLbsTextArea.setBorder(border);
         this.requestsLBPanel.add(this.requestsLBLabel);
-        this.requestsLBPanel2.add(this.requestsLBTextArea);
+        this.requestsLBPanel2.add(this.scroll);
 
         this.pendingRequestsPanel.add(this.requestsServerLabel);
-        this.pendingRequestsPanel2.add(this.requestsServerTextArea);
+        this.pendingRequestsPanel2.add(this.scroll2);
 
         this.stateserversPanel.add(this.stateserversLabel);
         this.stateserversPanel2.add(this.stateserversTextArea);
@@ -91,11 +98,11 @@ public class GUIMonitor extends JFrame {
     }
 
     public void setServerStatus(String request) {
-        map2.put(Integer.valueOf(request), "UP");
+        map2.put(Integer.valueOf(request), "ON");
     }
 
     public void setLbStatus(String request) {
-        map.put(Integer.valueOf(request), "UP");
+        map.put(Integer.valueOf(request), "ON");
     }
 
     public void setServerRequests(String request) {
@@ -108,11 +115,11 @@ public class GUIMonitor extends JFrame {
             stateserversTextArea.setText("");
             for(int i = 0; i < 2; i++){
                 stateLbsTextArea.append("LB:"+i+":"+map.get(i)+"\n");
-                map.put(i, "DOWN");
+                map.put(i, "OFF");
             }
             for(int i = 0; i < 10; i++){
                 stateserversTextArea.append("SERVER "+i+":"+map2.get(i)+"\n");
-                map2.put(i, "DOWN");
+                map2.put(i, "OFF");
             }
         }
 

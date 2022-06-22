@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -16,8 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PServer {
+
     private ServerSocketChannel serverSocketChannel;
-    private Message[] msg_queue = { null, null };
+    private Message[] msg_queue = {null, null};
     private TServer[] servers;
     private int id_server;
     public int workers_count;
@@ -25,6 +27,8 @@ public class PServer {
     private DataInputStream in;
     private Socket monitor_socket;
     private final GUIServer GServer;
+    private PrintWriter pout;
+    private Socket client_socket;
     Map<String, Object> map = new HashMap<String, Object>();
 
     public PServer(int workers_count, int id_server) {
@@ -45,7 +49,8 @@ public class PServer {
     }
 
     private void moveQueue() {
-        if (!queueEmpty()) {
+        int avail_server_i = getAvailableServer();
+        if (!queueEmpty() && avail_server_i!=-1) {
             Message msg_to_send;
             if (queueFull()) {
                 if (msg_queue[0].compareTo(msg_queue[1]) < 0) {
@@ -56,17 +61,18 @@ public class PServer {
                     msg_queue[0] = null;
                 }
             } else if (msg_queue[0] != null) {
-                msg_to_send = msg_queue[0];
-                msg_queue[0] = null;
+                    msg_to_send = msg_queue[0];
+                    msg_queue[0] = null;
             } else if (msg_queue[1] != null) {
-                msg_to_send = msg_queue[1];
-                msg_queue[1] = null;
-            } else
+                    msg_to_send = msg_queue[1];
+                    msg_queue[1] = null;
+            } else {
                 return;
-            int avail_server_i = getAvailableServer();
-            if (avail_server_i == -1)
-                return;
-            processClient(msg_to_send, id_server);
+            }
+            if(avail_server_i!=-1)
+                processClient(msg_to_send, id_server);
+        }else{
+            System.out.println("CHECK");
         }
     }
 
@@ -75,12 +81,16 @@ public class PServer {
      */
     private int totalFreeSlots() {
         int available_spots = 0;
-        for (TServer server : this.servers)
-            if (server == null)
+        for (TServer server : this.servers) {
+            if (server == null) {
                 available_spots++;
-        for (Message msg : msg_queue)
-            if (msg == null)
+            }
+        }
+        for (Message msg : msg_queue) {
+            if (msg == null) {
                 available_spots++;
+            }
+        }
         return available_spots;
     }
 
@@ -103,8 +113,9 @@ public class PServer {
             }
             try {
                 SocketChannel client = acceptClient();
-                if (client == null)
+                if (client == null) {
                     continue;
+                }
                 ByteBuffer buffer = ByteBuffer.allocate(1024);
 
                 client.read(buffer);
@@ -122,7 +133,7 @@ public class PServer {
                     this.processClient(Message.parseMessage(data), id_server);
                     map.put(String.valueOf(Message.parseMessage(data).request_id),
                             String.valueOf(Message.parseMessage(data).client_id) + ":"
-                                    + String.valueOf(Message.parseMessage(data).number_iteractions));
+                            + String.valueOf(Message.parseMessage(data).number_iteractions));
                     setPendingRequests(map);
                 }
 
@@ -158,7 +169,11 @@ public class PServer {
         if (this.queueFull()) {
             if (monitor_out != null) {
                 try {
-                    monitor_out.writeUTF("Server is Busy and no space in queue!");
+                    monitor_out.writeUTF("Server: Request C_"+msg.client_id+" R_"+msg.request_id+" rejected");
+                    this.client_socket = new Socket("127.0.0.1", 3020 + msg.client_id);
+                    this.pout = new PrintWriter(client_socket.getOutputStream(), true);
+                    this.pout.print(00+":"+String.valueOf(msg.request_id));
+                    this.pout.close();
                     monitor_out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -174,19 +189,23 @@ public class PServer {
             this.servers[next_worker_i].start();
             if (monitor_out != null) {
                 try {
-                    monitor_out.writeUTF("Server:Server "+msg.server_id+" sending request to Sthread " + next_worker_i);
+                    monitor_out.writeUTF("Server:Server " + msg.server_id + " sending R_"+msg.request_id+" to S_"+msg.server_id+" thread " + next_worker_i);
                     monitor_out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         } else {
-            if (monitor_out != null) {
-                try {
-                    monitor_out.writeUTF("Server - Queueing the request!");
-                    monitor_out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (this.queueFull()) {
+                    System.out.println("FULLLLL\n");
+            } else {
+                if (monitor_out != null) {
+                    try {
+                        monitor_out.writeUTF("Server:S_"+ msg.server_id+" Queueing the R_"+msg.request_id+" S_"+msg.client_id);
+                        monitor_out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             if (this.queueEmpty()) {
@@ -212,10 +231,11 @@ public class PServer {
     }
 
     private void clearThreads() {
-        for (int i = 0; i < this.workers_count; i++)
+        for (int i = 0; i < this.workers_count; i++) {
             if (this.servers[i] != null && !this.servers[i].isAlive()) {
                 this.servers[i] = null;
             }
+        }
     }
 
     private int getAvailableServer() {

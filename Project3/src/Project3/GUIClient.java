@@ -10,28 +10,36 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.Border;
 
 public class GUIClient extends JFrame implements ActionListener {
 
     JPanel mainPanel = new JPanel();
     JPanel pickClientPanel = new JPanel();
+    
 
     JLabel insertNILabel = new JLabel("Insert nº iterations");
     JTextField insertNITextField = new JTextField();
     JLabel insertDeadLineLabel = new JLabel("Insert deadline");
     JTextField insertDeadLineTextField = new JTextField();
+    
     JButton insertRequestsbutton = new JButton();
 
     JPanel pendingRequestsPanel = new JPanel();
     JLabel pendingRequestsLabel = new JLabel("  Pending requests ");
-    JTextArea pendingRequestsTextArea = new JTextArea(5, 25);
+    JTextArea pendingRequestsTextArea = new JTextArea(10, 25);
+    
+    JScrollPane scroll = new JScrollPane(pendingRequestsTextArea);
 
     JPanel executedRequestsPanel = new JPanel();
     JLabel executedRequestsLabel = new JLabel("Executed requests");
-    JTextArea executedRequestsTextArea = new JTextArea(5, 25);
+    JTextArea executedRequestsTextArea = new JTextArea(10, 25);
+    
+    JScrollPane scroll2 = new JScrollPane(executedRequestsTextArea);
     Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
     
     private String data;
@@ -40,6 +48,8 @@ public class GUIClient extends JFrame implements ActionListener {
     public GUIClient(String title) {
         this.insertNITextField.setColumns(5);
         this.insertDeadLineTextField.setColumns(5);
+        this.scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        this.scroll2.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle(title + " GUI");
         this.mainPanel.setLayout(new BoxLayout(this.mainPanel, BoxLayout.Y_AXIS));
@@ -52,10 +62,9 @@ public class GUIClient extends JFrame implements ActionListener {
         this.pickClientPanel.add(this.insertDeadLineTextField);
         this.pickClientPanel.add(this.insertRequestsbutton);
         this.pendingRequestsPanel.add(this.pendingRequestsLabel);
-        this.pendingRequestsPanel.add(this.pendingRequestsTextArea);
+        this.pendingRequestsPanel.add(this.scroll);
         this.executedRequestsPanel.add(this.executedRequestsLabel);
-        this.executedRequestsPanel.add(this.executedRequestsTextArea);
-        
+        this.executedRequestsPanel.add(this.scroll2);
         this.mainPanel.add(pickClientPanel);
         this.mainPanel.add(pendingRequestsPanel);
         this.mainPanel.add(executedRequestsPanel);
@@ -100,5 +109,8 @@ public class GUIClient extends JFrame implements ActionListener {
     
     public void setExecutedRequests(String request){
         executedRequestsTextArea.append(" "+request);
+    }
+    public void cancelPendingRequest(String request){
+        
     }
 }
